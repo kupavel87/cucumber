@@ -1,0 +1,58 @@
+<div class="jumbotron bg-transparent">
+{% with lists=favorit_lists %}
+    <h4>Важные</h4>
+    {% include "shopping/lists.html" %}
+{% endwith %}
+</div>
+<div class="jumbotron">
+{% with lists=my_lists %}
+    <h4>Мои</h4>
+    {% include "shopping/lists.html" %}
+{% endwith %}
+</div>
+<div class="jumbotron bg-transparent">
+{% with lists=shared_lists %}
+    <h4>Общие</h4>
+    {% include "shopping/lists.html" %}
+{% endwith %}
+</div>
+
+<script>
+    $('.property_list').click(function () {
+        var id = $(this).attr('id');
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('shopping.property_list') }}",
+            data: {
+                id: id,
+            },
+            success: function (data) {
+                console.log(data.name);
+                $('.btn-save-list').attr('id', id);
+                load_property(data, false);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $('.remove_list').click(function () {
+        var id = $(this).attr('id');
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('shopping.delete_list') }}",
+            data: {
+                id: id,
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+        $(".grid_lists").html(spiner);
+        setTimeout(update_grid, 500);
+    });
+</script>

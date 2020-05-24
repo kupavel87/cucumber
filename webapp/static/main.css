@@ -1,0 +1,11 @@
+.lvl-0:hover .lvl-0 {
+    display: block;
+}
+
+.lvl-1:hover .lvl-1 {
+    display: block;
+}
+
+.lvl-2:hover .lvl-2 {
+    display: block;
+}

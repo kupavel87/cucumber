@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="form-group row">
+    <div class='col-2 col-form-label' for="#SelectList">Выбор списка</div>
+    <div class='col-3'>
+        <select class="form-control" id="SelectList">
+            <optgroup label="Важные">
+                {% for item in favorit_lists%}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Личные">
+                {% for item in my_lists%}
+                {% if not item.favorit %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Общие">
+                {% for item in shared_lists%}
+                {% if not item.favorit %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </optgroup>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-5">
+        <div class="card text-center shadow">
+            <div class="d-flex align-items-center">
+                <strong>Загрузка...</strong>
+                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalCatalog" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="ModalCatalogLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalCatalogLabel">Каталог товаров</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center">
+                    <strong>Загрузка...</strong>
+                    <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    var spiner = '<div class="d-flex align-items-center"> \
+                    <strong>Загрузка...</strong> \
+                    <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div> \
+                </div>';
+
+    function update_list() {
+        $(".card").html(spiner);
+        $(".modal-body").html(spiner);
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('shopping.get_detail') }}",
+            data: { "id": $('#SelectList').val() },
+            success: function (data) {
+                $(".card").html(data.html)
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    };
+
+    {% if select %}
+    $('#SelectList').val({{ select }});
+    {% endif %}
+    setTimeout(update_list, 100);
+
+    $('#ModalCatalog').on('show.bs.modal', function (e) {
+        $.ajax({
+            url: "{{ url_for('catalog.show') }}",
+            success: function (data) {
+                $(".modal-body").html(data.html);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $('#ModalCatalog').on('hidden.bs.modal', function (e) {
+        update_list();
+    });
+
+    $('.list-update').click(function () {
+        update_list();
+    });
+
+    $('#SelectList').change(function () {
+        update_list($(this).val());
+    });
+</script>
+{% endblock %}

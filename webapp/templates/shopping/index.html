@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shopping.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="grid_lists">
+    <div class="d-flex align-items-center">
+        <strong>Загрузка...</strong>
+        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+    </div>
+</div>
+<div class="row">
+    <button type="button" class="btn btn-success btn-lg btn-block new-list">
+        Создать новый список покупок
+    </button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="CreateModal" tabindex="-1" role="dialog" aria-labelledby="CreateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateModalLabel">Создание списка покупок</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form class='form-create-list'>
+                        {{ form.hidden_tag() }}
+                        <div class="form-group row">
+                            {{ form.name.label(class_='col-3 col-form-label') }}
+                            <div class='col-9'>{{ form.name() }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-check col">
+                                {{ form.favorit(class_='form-check-input') }}
+                                {{ form.favorit.label(class_='form-check-label') }}
+                            </div>
+                            <div class="form-check col">
+                                {{ form.private(class_='form-check-input') }}
+                                {{ form.private.label(class_='form-check-label') }}
+                            </div>
+                        </div>
+                        <div class="jumbotron">
+                            <div class="form-group row">
+                                <input class="form-control" type="text" placeholder="Поиск пользователя">
+                            </div>
+                            <div data-spy="scroll" data-offset="0">
+                                {% for user in users %}
+                                <div class="row">
+                                    <label class="form-control-label form-control-label-sm col-7 username"
+                                        for="SelectRole">{{ user.username }}</label>
+                                    <select class="form-control form-control-sm col-5 role" id="SelectRole">
+                                        <option value='1'>Нет прав</option>
+                                        <option value='2'>Чтение</option>
+                                        <option value='3'>Редактирование</option>
+                                        <option value='4'>Управление</option>
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn-create-list">Создать</button>
+                <button type="button" class="btn btn-success btn-save-list">Сохранить</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    spiner = '<div class="d-flex align-items-center"> \
+                    <strong>Загрузка...</strong> \
+                    <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div> \
+                </div>';
+
+    function update_grid() {
+        $(".grid_lists").html(spiner);
+        $.ajax({
+            url: "{{ url_for('shopping.update_grid') }}",
+            success: function (data) {
+                $(".grid_lists").html(data.html);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    };
+    setTimeout(update_grid, 500);
+
+    function load_property(propery_list, new_list) {
+        $('#name').val(propery_list.name);
+        $('#favorit').prop('checked', propery_list.favorit);
+        $('#private').prop('checked', propery_list.private);
+        $('.jumbotron :input').attr('disabled', propery_list.private);
+        $('.role').each(function () {
+            $(this).val('1');
+        });
+        for (var name in propery_list.access) {
+            $('.username').filter(function () {
+                if (name == $(this).text()) {
+                    $(this).siblings('.role').val(propery_list.access[name]);
+                }
+            });
+        };
+        if (new_list) {
+            $('.btn-create-list').show();
+            $('.btn-save-list').hide();
+        } else {
+            $('.btn-create-list').hide();
+            $('.btn-save-list').show();
+        };
+        $('#CreateModal').modal('show');
+    };
+
+    $('.new-list').click(function () {
+        var new_list = { name: "Новый список", favorit: false, private: true, access: {} };
+        load_property(new_list, true);
+    });
+
+    $('#private').click(function () {
+        $('.jumbotron :input').attr('disabled', this.checked);
+    });
+
+    $('.btn-create-list').click(function () {
+        var data = {
+            'csrf_token': $('#csrf_token').val(), 'name': $('#name').val(),
+            'favorit': $('#favorit').is(':checked'), 'private': $('#private').is(':checked')
+        };
+        if (!$('#private').is(':checked')) {
+            var access = {};
+            $('.role').each(function () {
+                var val = $(this).val();
+                if (val != '1') {
+                    var name = $(this).siblings(".username").text();
+                    access[name] = val;
+                }
+            });
+            data['access'] = access;
+        };
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "{{ url_for('shopping.create_list') }}",
+            data: JSON.stringify(data),
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+
+        });
+        $('#CreateModal').modal('hide');
+    });
+
+    $('#CreateModal').on('hidden.bs.modal', function (e) {
+        $(".grid_lists").html(spiner);
+        setTimeout(update_grid, 500);
+    });
+
+    $('select').change(function() {
+        if ($(this).val() > 1) {
+            $(this).addClass('bg-secondary');
+        } else {
+            $(this).removeClass('bg-secondary');
+        }
+        
+    });
+</script>
+{% endblock %}

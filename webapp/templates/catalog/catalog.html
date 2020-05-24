@@ -1,0 +1,66 @@
+<div class="row">
+    <ul class="list-group list-group-flush">
+        {% for item in catalog recursive %}
+        {% if item.children %}
+        <li class="list-group-item nav-expand">
+            <a class="nav-expand-link" href="#">
+                {{ item.name }}
+                <span class="badge badge-success badge-pill">
+                    <svg class="bi bi-chevron-right" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M4.646 1.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L10.293 8 4.646 2.354a.5.5 0 010-.708z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </span>
+            </a>
+            <ul class="list-group nav-expand-content">
+                {{ loop(item.children) }}
+            </ul>
+        </li>
+        {% else %}
+        <li class="list-group-item">
+            <a class="nav-link catalog-item" href="#">{{ item.name }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    var navExpand = [].slice.call(document.querySelectorAll('.nav-expand'));
+    var backLink = '<li class="list-group-item list-group-item-secondary"> \
+                    <a class="nav-link nav-back-link" href="javascript:;"> \
+                    <svg class="bi bi-chevron-left" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"> \
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 010 .708L5.707 8l5.647 5.646a.5.5 0 01-.708.708l-6-6a.5.5 0 010-.708l6-6a.5.5 0 01.708 0z" clip-rule="evenodd"/> \
+                    </svg> \
+                    Back \
+                    </a> \
+                </li>';
+
+    navExpand.forEach(item => {
+        item.querySelector('.nav-expand-content').insertAdjacentHTML('afterbegin', backLink);
+        item.querySelector('.nav-expand-link').addEventListener('click', () => item.classList.add('active'));
+        item.querySelector('.nav-back-link').addEventListener('click', () => item.classList.remove('active'));
+    });
+
+    $(".catalog-item").click(function () {
+        var item = $(this).text();
+        var catalog = $('#SelectList').val();
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('shopping.add_shopping_item') }}",
+            data: {
+                "name": item,
+                "id": catalog
+            },
+            success: function (data) {
+                console.log(data + ': Added ' + item + ' to list ' + catalog);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+        return false;
+    });
+</script>

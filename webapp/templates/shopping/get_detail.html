@@ -44,10 +44,12 @@
     {% endif %}
 </div>
 <div class="card-footer d-flex justify-content-around">
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalCatalog">
-        Добавить
-    </button>
-    <button class="btn btn-danger list-clear">Очистить</button>
+    <button type="button" class="btn btn-success modal-catalog">Добавить</button>
+    <form action="{{ url_for('shopping.clear_shopping_list') }}"method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.submit() }}
+        {{ form.id(value=shopping_list.id) }}
+    </form>
 </div>
 
 <script>
@@ -64,19 +66,10 @@
         return false;
     })
 
-    $('.list-clear').click(function () {
-        var id = $('#SelectList').val();
-        $.ajax({
-            type: "POST",
-            url: "{{ url_for('shopping.clear_shopping_list') }}",
-            data: {"id": id},
-            success: function (data) {
-                console.log(data + ': Clear list ' + id);
-                update_list();
-            },
-            error: function (error) {
-                console.log(error);
-            }
+    $('.modal-catalog').click(function () {
+        $.get("{{ url_for('catalog.show') }}", function (data) {
+            $(".modal-body").html(data.html);
+            $('#ModalCatalog').modal('show');
         });
     });
 </script>

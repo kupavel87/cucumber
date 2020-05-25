@@ -2,6 +2,7 @@ from flask import Flask, flash, render_template, redirect, url_for
 from flask_login import LoginManager, current_user, login_required
 from flask_migrate import Migrate
 from flask_moment import Moment
+from flask_wtf.csrf import CSRFProtect
 
 from webapp.db import db
 from webapp.catalog.models import Catalog
@@ -21,6 +22,7 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
     moment = Moment(app)
+    CSRFProtect(app)
 
     login_manager = LoginManager()
     login_manager.init_app(app)

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shopping.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="grid_lists">
+    <div class="d-flex align-items-center">
+        <strong>Загрузка...</strong>
+        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+    </div>
+</div>
+<div class="row">
+    <button type="button" class="btn btn-success btn-lg btn-block new-list">
+        Создать новый список покупок
+    </button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="CreateModal" tabindex="-1" role="dialog" aria-labelledby="CreateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function update_grid() {
+        $.ajax({
+            url: "{{ url_for('shopping.update_grid') }}",
+            success: function (data) {
+                $(".grid_lists").html(data.html);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    };
+    setTimeout(update_grid, 500);
+
+    $('.new-list').click(function () {
+        $.get("{{ url_for('shopping.property_list') }}", function (data) {
+            $(".modal-content").html(data.html);
+            $('#CreateModal').modal('show');
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,72 @@
+<form action="{{ url_for('shopping.create_list') }}" method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.list_id() }}
+    <div class="modal-header">
+        <h5 class="modal-title" id="CreateModalLabel">Cписка покупок</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+
+            <div class="form-group row">
+                {{ form.name.label(class_='col-3 col-form-label') }}
+                <div class='col-9'>{{ form.name() }}</div>
+            </div>
+            <div class="form-group row">
+                <div class="form-check col">
+                    {{ form.favorit(class_='form-check-input') }}
+                    {{ form.favorit.label(class_='form-check-label') }}
+                </div>
+                <div class="form-check col">
+                    {{ form.private(class_='form-check-input') }}
+                    {{ form.private.label(class_='form-check-label') }}
+                </div>
+            </div>
+            <div class="jumbotron jumbotron-role">
+                <div class="form-group row">
+                    {{ form.search() }}
+                </div>
+                <div data-spy="scroll" data-offset="0">
+                    {% for user in form.access %}
+                    <div class="row">
+                        {{ user.form.id() }}
+                        {{ user.form.name() }}
+                        {{ user.form.role() }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        {% if form.list_id.data %}
+        {{ form.submit(value="Сохранить") }}
+        {% else %}
+        {{ form.submit(value="Создать") }}
+        {% endif %}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('.jumbotron-role :input').attr('disabled', {{ form.private.data|tojson }});
+    });
+
+    $('#private').click(function () {
+        $('.jumbotron-role :input').attr('disabled', this.checked);
+    });
+
+    $('select').change(function () {
+        if ($(this).val() > 1) {
+            $(this).addClass('bg-secondary');
+            $(this).addClass('text-white');
+        } else {
+            $(this).removeClass('bg-secondary');
+            $(this).removeClass('text-white');
+        }
+    });
+</script>

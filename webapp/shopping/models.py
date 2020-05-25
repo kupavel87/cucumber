@@ -28,6 +28,12 @@ class Shopping_list(db.Model):
                 return level.role
         return 0
 
+    def access_dict(self):
+        access_dict = {}
+        for access in self.access:
+            access_dict[access.user.username] = access.role
+        return access_dict
+
     def __repr__(self):
         return '<Shopping list {}>'.format(self.name)
 

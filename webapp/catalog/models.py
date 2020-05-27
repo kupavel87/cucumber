@@ -8,8 +8,16 @@ class Catalog(db.Model):
     name = db.Column(db.String(255), unique=True, nullable=False)
     level = db.Column(db.Integer)
     parent_id = db.Column(db.Integer, db.ForeignKey('catalog.id'))
-    children = db.relationship('Catalog', backref=db.backref('catalog', remote_side=[id]))
+    children = db.relationship('Catalog', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
     products = db.relationship('Product', backref='catalog', lazy='dynamic')
+
+    def get_level(self):
+        if self.level is None:
+            if self.parent_id:
+                self.level = self.parent.get_level() + 1
+            else:
+                self.level = 0
+        return self.level
 
     def __repr__(self):
         return '<Catalog {}>'.format(self.name)

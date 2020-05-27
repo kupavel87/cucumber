@@ -13,7 +13,7 @@ class Shopping_list(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     author = db.relationship("User")
     items = db.relationship('Shopping_item', lazy='dynamic')
-    access = db.relationship('List_access', backref='lists', lazy='dynamic')
+    access = db.relationship('List_access')
     date_create = db.Column(db.DateTime, default=datetime.utcnow)
     date_change = db.Column(db.DateTime, default=datetime.utcnow)
 

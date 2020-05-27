@@ -5,6 +5,7 @@ from flask_moment import Moment
 from flask_wtf.csrf import CSRFProtect
 
 from webapp.db import db
+from webapp.admin.views import blueprint as admin_blueprint
 from webapp.catalog.models import Catalog
 from webapp.catalog.views import blueprint as catalog_blueprint
 from webapp.purchase.models import Purchase
@@ -28,6 +29,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'user.login'
     app.register_blueprint(user_blueprint)
+    app.register_blueprint(admin_blueprint)
     app.register_blueprint(catalog_blueprint)
     app.register_blueprint(purchase_blueprint)
     app.register_blueprint(shopping_blueprint)

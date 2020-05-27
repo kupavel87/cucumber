@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">{{ page_title }}</li>
+    </ol>
+</nav>
+<div class="row h-75">
+    <div class="col-4 h-100">
+        <div class="list-group overflow-auto shadow" id="chapter-list">
+            {% for id, val in links.items() %}
+            <a class="list-group-item list-group-item-action" id="{{ id }}" href="{{ url_for(val.link) }}"
+                data-toggle="list">{{ val.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-8 border rounded shadow h-100">
+        <div class='overflow-auto h-100'>
+            <div class="lvl-1">
+                <h4 class="text-center">Выберите раздел</h4>
+            </div>
+            <div class="lvl-2" style="display: none;">
+                <button type="button" class="btn btn-secondary btn-block back-btn">Назад</button>
+                <div class="lvl-2-content"></div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-success btn-block mt-3 shadow add-btn"
+            style="display: none;">Добавить</button>
+    </div>
+</div>
+
+<div class="modal fade" id="CreateModal" tabindex="-1" role="dialog" aria-labelledby="CreateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script>
+    $('.list-group-item').click(function () {
+        // event.preventDefault();
+        $.get($(this).attr('href'), function (data) {
+            $(".lvl-1").html(data.html);
+            show_lvl_1();
+        });
+    });
+
+    $('.back-btn').click(function () {
+        show_lvl_1();
+    })
+
+    $('.add-btn').click(function () {
+        $.get("{{ url_for('catalog.get', category_id=0) }}", function (data) {
+            $(".modal-content").html(data.html);
+            $('#CreateModal').modal('show');
+        });
+    });
+</script>
+{% endblock %}

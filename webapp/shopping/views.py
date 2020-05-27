@@ -1,7 +1,6 @@
-from flask import Blueprint, flash, render_template, redirect, url_for, request, jsonify, json
+from flask import Blueprint, flash, render_template, redirect, url_for, request, jsonify
 from flask_login import current_user, login_required
 from werkzeug.exceptions import BadRequestKeyError
-from urllib.parse import unquote
 
 from webapp.catalog.models import Catalog
 from webapp.shopping.forms import CreateShoppingListForm, OpenDetail, DeleteList, RoleForm, ClearList
@@ -76,13 +75,11 @@ def property_list():
             id = request.form['id']
         except BadRequestKeyError:
             return "Error. Id not found."
-        else:
-            shopping_list = Shopping_list.query.filter_by(id=id).first()
-            if not shopping_list:
-                return "Error. Id not found."
-            else:
-                form = CreateShoppingListForm(shopping_list.name, list_id=shopping_list.id, favorit=shopping_list.favorit,
-                                              private=shopping_list.private, users=users, access=shopping_list.access_dict())
+        shopping_list = Shopping_list.query.filter_by(id=id).first()
+        if not shopping_list:
+            return "Error. Id not found."
+        form = CreateShoppingListForm(shopping_list.name, list_id=shopping_list.id, favorit=shopping_list.favorit,
+                                      private=shopping_list.private, users=users, access=shopping_list.access_dict())
     html = render_template('shopping/property.html', form=form)
     return jsonify(html=html)
 
@@ -109,7 +106,6 @@ def detail():
     shared_lists = Shopping_list.query.filter(Shopping_list.id.in_(shared_lists_id))
     favorit_lists = my_lists.union(shared_lists).filter_by(favorit=True)
     if request.method == 'POST':
-        print(request.form)
         try:
             id = request.form['id']
         except BadRequestKeyError:
@@ -131,7 +127,8 @@ def get_detail():
         return 'Error. Access is denied'
     shopping_items = Shopping_item.query.filter_by(list_id=id).all()
     form = ClearList()
-    html = render_template('shopping/get_detail.html', shopping_list=shopping_list, shopping_items=shopping_items, form=form)
+    html = render_template('shopping/get_detail.html', shopping_list=shopping_list,
+                           shopping_items=shopping_items, form=form)
     return jsonify({'html': html})
 
 

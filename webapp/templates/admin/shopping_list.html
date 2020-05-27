@@ -1,0 +1,22 @@
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Важность</th>
+            <th scope="col">Приватность</th>
+            <th scope="col">Автор</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in shopping_list %}
+        <tr>
+            <th scope="row">{{ item.id }}</th>
+            <td>{{ item.name }}</td>
+            <td>{{ item.favorit }}</td>
+            <td>{{ item.private }}</td>
+            <td>{{ item.author.username }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

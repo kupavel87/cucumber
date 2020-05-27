@@ -62,6 +62,7 @@
     });
 
     $(".catalog-item").click(function () {
+        event.preventDefault();
         var item = $(this).text();
         var catalog = $('#SelectList').val();
         var csrf_token = "{{ csrf_token() }}";
@@ -88,6 +89,6 @@
                 console.log(error);
             }
         });
-        return false;
+        // return false;
     });
 </script>

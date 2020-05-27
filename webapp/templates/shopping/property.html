@@ -25,10 +25,10 @@
                 </div>
             </div>
             <div class="jumbotron jumbotron-role">
-                <div class="form-group row">
+                <div class="form-group row" id="search-str">
                     {{ form.search() }}
                 </div>
-                <div data-spy="scroll" data-offset="0">
+                <div data-spy="scroll" data-offset="0" data-target="#search-str">
                     {% for user in form.access %}
                     <div class="row">
                         {{ user.form.id() }}

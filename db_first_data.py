@@ -38,18 +38,18 @@ with app.app_context():
     for key_0, value_0 in catalog.items():
         level_0 = Catalog.query.filter_by(name=key_0).first()
         if not level_0:
-            level_0 = Catalog(name=key_0, parent_id=None)
+            level_0 = Catalog(name=key_0, parent_id=None, level=0)
             db.session.add(level_0)
             print(f'Добавлен каталог {key_0}')
         for key_1, value_1 in value_0.items():
             level_1 = Catalog.query.filter_by(name=key_1).first()
             if not level_1:
-                level_1 = Catalog(name=key_1, parent_id=level_0.id)
+                level_1 = Catalog(name=key_1, parent_id=level_0.id, level=1)
                 db.session.add(level_1)
                 print(f'Добавлен каталог {key_1}')
             for key_2 in value_1:
                 if not Catalog.query.filter_by(name=key_2).count():
-                    level_2 = Catalog(name=key_2, parent_id=level_1.id)
+                    level_2 = Catalog(name=key_2, parent_id=level_1.id, level=2)
                     db.session.add(level_2)
                     print(f'Добавлен каталог {key_2}')
     db.session.commit()

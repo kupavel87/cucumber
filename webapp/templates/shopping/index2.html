@@ -29,14 +29,8 @@
 {% block script %}
 <script>
     function update_grid() {
-        $.ajax({
-            url: "{{ url_for('shopping.update_grid') }}",
-            success: function (data) {
-                $(".grid_lists").html(data.html);
-            },
-            error: function (error) {
-                console.log(error);
-            }
+        $.get("{{ url_for('shopping.update_grid') }}", function (data) {
+            $(".grid_lists").html(data.html);
         });
     };
     setTimeout(update_grid, 500);

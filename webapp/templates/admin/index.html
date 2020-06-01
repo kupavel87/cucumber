@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block content %}
+<div role="alert" aria-live="polite" aria-atomic="true">
+    <div style="position: absolute; top: 50; right: 0;" class="my-toast"></div>
+</div>
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item active" aria-current="page">{{ page_title }}</li>
@@ -13,14 +17,14 @@
 <div class="row h-75">
     <div class="col-4 h-100">
         <div class="list-group overflow-auto shadow" id="chapter-list">
-            {% for id, val in links.items() %}
+            {% for id, val in chapters.items() %}
             <a class="list-group-item list-group-item-action" id="{{ id }}" href="{{ url_for(val.link) }}"
-                data-toggle="list">{{ val.name }}</a>
+                data-toggle="list" url_get="{{ url_for(val.url_get) }}">{{ val.name }}</a>
             {% endfor %}
         </div>
     </div>
-    <div class="col-8 border rounded shadow h-100">
-        <div class='overflow-auto h-100'>
+    <div class="col-8 h-100">
+        <div class='overflow-auto border rounded shadow h-100'>
             <div class="lvl-1">
                 <h4 class="text-center">Выберите раздел</h4>
             </div>
@@ -29,7 +33,7 @@
                 <div class="lvl-2-content"></div>
             </div>
         </div>
-        <button type="button" class="btn btn-success btn-block mt-3 shadow add-btn"
+        <button type="button" class="btn btn-success btn-lg btn-block mt-3 shadow add-btn"
             style="display: none;">Добавить</button>
     </div>
 </div>
@@ -59,7 +63,7 @@
     })
 
     $('.add-btn').click(function () {
-        $.get("{{ url_for('catalog.get', category_id=0) }}", function (data) {
+        $.get($('.list-group-item.active').attr('url_get'), function (data) {
             $(".modal-content").html(data.html);
             $('#CreateModal').modal('show');
         });

@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/purchase.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-around mt-2">
+    <form method="POST" class="col-8">
+        {{ form.hidden_tag() }}
+        <div class="form-group row">
+            {{ form.date.label(class_='col-auto col-form-label') }}
+            <div class='col-auto mr-auto'>{{ form.date() }}</div>
+            {{ form.shop_id.label(class_='col-auto col-form-label shop-name') }}
+            {{ form.shop_id() }}
+            <div class='col-auto'>
+                <button type="button" class="btn btn-danger choose-shop">
+                    <svg class="bi bi-plus" width="1.4em" height="1.4em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z" />
+                        <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        {% for product in form.rows %}
+        <div class="form-group">
+            <div class="form-row">
+                {{ product.form.id(class_="form-control") }}
+                <div class="input-group col-8">
+                    <div class="input-group-prepend">
+                        {% if product.form.id.data != "" %}
+                        <span class="input-group-text text-succes" id="checkIcon">
+                            <svg class="bi bi-check" width="1.4em" height="1.4em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z" />
+                            </svg>
+                        </span>
+                        {% else %}
+                        <span class="input-group-text text-danger" id="checkIcon">
+                            <svg class="bi bi-exclamation" width="1.4em" height="1.4em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+                            </svg>
+                        </span>
+                        {% endif %}
+                    </div>
+                    {{ product.form.title() }}
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-dark collapse-btn" type="button">
+                            <svg class="bi bi-caret-down-fill" width="1.4em" height="1.4em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-2">{{ product.form.quantity() }}</div>
+                <div class="col-2">{{ product.form.total() }}</div>
+            </div>
+
+            <div class="form-row mt-2">
+                <div class="col-8">
+                    <div class="collapse" id="priceDetail">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">
+                                {{ product.form.product_name() }}
+                                <div class="col-auto product-name">{{ product.form.product_id.label() }}</div>
+                                <div class="col-auto"><button class="btn btn-danger btn-sm product-name-btn">Выбрать</button></div>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                {{ product.form.price_value() }}
+                                <div class="col-auto product-price">{{ product.form.price_id.label() }}</div>
+                                <div class="col-auto"><button class="btn btn-danger btn-sm product-price-btn">Выбрать</button></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="form-group row d-flex justify-content-end">
+            {{ form.total.label(class_='col-2 col-form-label') }}
+            <div class='col-2'>{{ form.total() }}</div>
+        </div>
+        <p>{{ form.submit() }}</p>
+    </form>
+</div>
+
+{% include "purchase/add_confirm_shop.html" %}
+
+<div class="modal fade" id="ChooseProduct" tabindex="-1" role="dialog" aria-labelledby="ChooseProductLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ChooseProductLabel">Выбор товара</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6 product-list"></div>
+                    <div class="col-6">
+                        <form id="addProduct">
+                            {{ product_form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ product_form.name.label() }}
+                                {{ product_form.name() }}
+                            </div>
+                            <div class="form-group">
+                                {{ product_form.code.label() }}
+                                {{ product_form.code() }}
+                            </div>
+                            <div class="form-group">
+                                {{ product_form.catalog_id.label() }}
+                                {{ product_form.catalog_id() }}
+                            </div>
+                        </form>
+                        <button class="btn btn-warning btn-block add-product">Создать</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <div class="col-auto text-danger product-message"></div>
+                <div class="col-4 d-flex justify-content-end">
+                    <button type="button" class="btn btn-success choose-product-done">Выбрать</button>
+                    <button type="button" class="btn btn-secondary ml-3" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ChoosePrice" tabindex="-1" role="dialog" aria-labelledby="ChoosePriceLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ChoosePriceLabel">Выбор цены</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6 price-list"></div>
+                    <div class="col-6">
+                        <form id="addPrice">
+                            {{ price_form.hidden_tag() }}
+                            <div class="form-row">
+                                {{ price_form.shop_id.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.shop_id(disabled="") }}</div>
+                            </div>
+                            <div class="form-row">
+                                {{ price_form.product_id.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.product_id(disabled="") }}</div>
+                            </div>
+                            <div class="form-row">
+                                {{ price_form.date.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.date() }}</div>
+                            </div>
+                            <div class="form-row">
+                                {{ price_form.price.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.price() }}</div>
+                            </div>
+                            <div class="form-row mb-2 mt-2">
+                                <div class="form-check offset-4 col-8">
+                                    {{ price_form.discount() }}
+                                    {{ price_form.discount.label(class_="form-check-label") }}
+                                </div>
+                            </div>
+                        </form>
+                        <button class="btn btn-warning btn-block add-price">Создать</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <div class="col-auto text-danger price-message"></div>
+                <div class="col-4 d-flex justify-content-end">
+                    <button type="button" class="btn btn-success choose-price-done">Выбрать</button>
+                    <button type="button" class="btn btn-secondary ml-3" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    var icon_expand = '<svg class="bi bi-caret-down-fill" width="1.4em" height="1.4em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"> \
+                            <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" /> \
+                        </svg>';
+    var icon_collapse = '<svg class="bi bi-caret-up-fill" width="1.4em" height="1.4em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"> \
+                            <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/> \
+                        </svg>';
+
+    $('.collapse-btn').click(function() {
+        $(this).parents('.form-group').find('#priceDetail').collapse('toggle');
+    });
+
+    $('#priceDetail').on('shown.bs.collapse', function () {
+        $(this).parents('.form-group').find('.collapse-btn').html(icon_collapse);
+    });
+
+    $('#priceDetail').on('hidden.bs.collapse', function () {
+        $(this).parents('.form-row').siblings('.form-row').find('button').html(icon_expand);
+    });
+
+    function update_shops() {
+        $.get("{{ url_for('catalog.shops') }}", function (data) {
+            $('.shop-list').html(data.html);
+            $('#ChooseShop').modal('show');
+        });
+    };
+
+    $('.choose-shop').click(function () {
+        $('.shop-message').html("");
+        update_shops();
+    });
+
+    $('.add-shop').click(function () {
+        console.log('add-shop');
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('catalog.add_shop') }}",
+            data: $('#addShop').serialize(),
+            success: function (data) {
+                if (data.status = "ok") {
+                    update_shops();
+                };
+                $('.shop-message').html(data.text);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $('.choose-shop-done').click(function () {
+        var id = $('#ChooseShop .active').attr('id');
+        console.log("Shop " + id);
+        if (id) {
+            $('.shop-name').text("Магазин: " + $('#ChooseShop .active').text());
+            $('#shop').val(id);
+            $('.choose-shop').removeClass("btn-danger").addClass("btn-success");
+            $('#ChooseShop').modal('hide');
+        } else {
+            $('.shop-message').html("Магазин не выбран");
+        };
+    });
+
+    function update_products() {
+        $.get("{{ url_for('catalog.products') }}", function (data) {
+            $('.product-list').html(data.html);
+            $('#catalogSelect option').clone().appendTo("#catalog_id");
+            $('#ChooseProduct').modal('show');
+        });
+    };
+
+    $('.product-name-btn').click(function (event) {
+        event.preventDefault();
+        $('#addProduct #name').val($(this).parents('.list-group-item').find('.product_name').val());
+        $('.product-message').html("");
+        update_products();
+    });
+
+    $('.add-product').click(function () {
+        console.log('add-product');
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('catalog.add_product') }}",
+            data: $('#addProduct').serialize(),
+            success: function (data) {
+                if (data.status = "ok") {
+                    update_products();
+                    $('#addProduct').trigger("reset");
+                };
+                $('.product-message').html(data.text);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $('.choose-product-done').click(function () {
+        var id = $('#ChooseProduct .active').attr('id');
+        console.log("Product " + id);
+        if (id) {
+            $('.product-name').text("Товар: " + $('#ChooseProduct .active').text());
+            $('.product-name').attr("id", $('#ChooseProduct .active').attr('id'));
+            $('.product-name-btn').removeClass("btn-danger").addClass("btn-success");
+            $('#ChooseProduct').modal('hide');
+        } else {
+            $('.product-message').html("Товар не выбран");
+        };
+    });
+
+    function update_prices() {
+        var shop_id = $('#shop').val();
+        var product_id = $('.product-name').attr("id");
+        var csrf_token = "{{ csrf_token() }}";
+        $.ajax({
+            type: "POST",
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            },
+            url: "{{ url_for('catalog.prices') }}",
+            data: { 'product_id': product_id, 'shop_id': shop_id },
+            success: function (data) {
+                $('.price-list').html(data.html);
+                $('#shopSelect option').clone().appendTo("#shop_id");
+                $("#shop_id").val($('#shopSelect').val()).change();
+                console.log('shopSelect ' + $('#shopSelect').val());
+                console.log('shopS_id ' + $('#shop_id').val());
+                $('#productSelect option').clone().appendTo("#product_id");
+                $("#product_id").val($('#productSelect').val());
+                $('#ChoosePrice').modal('show');
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    };
+
+    $('.product-price-btn').click(function () {
+        event.preventDefault();
+        $('.price-message').html("");
+        update_prices();
+    });
+
+    $('.add-price').click(function () {
+        console.log('add-price');
+        $("#shop_id").prop('disabled', false);
+        $("#product_id").prop("disabled", false);
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('catalog.add_price') }}",
+            data: $('#addPrice').serialize(),
+            success: function (data) {
+                if (data.status = "ok") {
+                    update_prices();
+                    $('#addPrice').trigger("reset");
+                };
+                $('.price-message').html(data.text);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+        $("#shop_id").prop('disabled', true);
+        $("#product_id").prop("disabled", true);
+    });
+
+    $('.choose-price-done').click(function () {
+        var id = $('#ChoosePrice .active').attr('id');
+        console.log("Price " + id);
+        if (id) {
+            $('.product-price').text("Цена: " + $('#ChoosePrice .active').text());
+            $('.product-price').attr("id", $('#ChoosePrice .active').attr('id'));
+            $('.product-price-btn').removeClass("btn-danger").addClass("btn-success");
+            $('#ChoosePrice').modal('hide');
+        } else {
+            $('.price-message').html("Цена не выбрана");
+        };
+    });
+</script>
+{% endblock %}

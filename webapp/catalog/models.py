@@ -25,16 +25,29 @@ class Catalog(db.Model):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True, nullable=False)
+    code = db.Column(db.String(13), index=True, unique=True)
+    name = db.Column(db.String(255), index=True, unique=True, nullable=False)
     catalog_id = db.Column(db.Integer, db.ForeignKey('catalog.id'), nullable=False)
+    pen_names = db.relationship('Pen_name', backref='product', lazy='dynamic')
 
     def __repr__(self):
         return '<Product {}>'.format(self.name)
 
 
+class Pen_name(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    name = db.Column(db.String(255), index=True, unique=True, nullable=False)
+
+    def __repr__(self):
+        return '<Pen name {}>'.format(self.name)
+
+
 class Shop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    inn = db.Column(db.String(20), index=True, unique=True)
     name = db.Column(db.String(255), unique=True, nullable=False)
+    address = db.Column(db.String(255))
 
     def __repr__(self):
         return '<Shop {}>'.format(self.name)
@@ -43,12 +56,15 @@ class Shop(db.Model):
 class Price(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), index=True, nullable=False)
+    shop_id = db.Column(db.Integer, db.ForeignKey('shop.id'), index=True, nullable=False)
+    discount = db.Column(db.Boolean, default=False, nullable=False)
+    price = db.Column(db.Float, default=0.0, nullable=False)
+
     product = db.relationship('Product')
-    shop_id = db.Column(db.Integer, db.ForeignKey('shop.id'), nullable=False)
     shop = db.relationship('Shop')
-    discont = db.Column(db.Boolean, default=False, nullable=False)
-    cost = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return '<{} - {}({}, {})>'.format(self.product.name, self.cost, self.date, self.shop.name)
+        if self.product_id and self.shop_id:
+            return '<{} - {}({}, {})>'.format(self.product.name, self.price, self.date, self.shop.name)
+        return 'Price: {}'.format(self.price)

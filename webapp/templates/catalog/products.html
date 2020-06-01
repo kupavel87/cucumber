@@ -1,0 +1,27 @@
+<div class="form-row">
+    <label for="catalogSelect" class="form-control-label col-4">Каталог</label>
+    <select class="form-control col-8" id="catalogSelect">
+        {% for opt in choises %}
+        <option value={{ opt.0 }}>{{ opt.1 }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="list-group products-list" role="tablist"></div>
+
+<script>
+    var prod = JSON.parse('{{ all_products | tojson }}');
+    
+    var a_template = '<a class="list-group-item list-group-item-action" data-toggle="list" href="#" role="tab" id="product-id">'
+    $('#catalogSelect').change(function () {
+        var val = $(this).val();
+        console.log('Catalog ' + val);
+        $('.products-list').html("");
+        if (val > 0) {
+            for (var key in prod[val]) {
+                item = prod[val][key];
+                var link = a_template.replace('product-id', item.id) + item.name + '</a>';
+                $('.products-list').append(link);
+            }
+        }
+    });
+</script>

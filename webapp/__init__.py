@@ -8,6 +8,7 @@ from webapp.db import db
 from webapp.admin.views import blueprint as admin_blueprint
 from webapp.catalog.models import Catalog
 from webapp.catalog.views import blueprint as catalog_blueprint
+from webapp.main.views import blueprint as main_blueprint
 from webapp.purchase.models import Purchase
 from webapp.purchase.views import blueprint as purchase_blueprint
 from webapp.shopping.models import Shopping_list
@@ -31,6 +32,7 @@ def create_app():
     app.register_blueprint(user_blueprint)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(catalog_blueprint)
+    app.register_blueprint(main_blueprint)
     app.register_blueprint(purchase_blueprint)
     app.register_blueprint(shopping_blueprint)
 

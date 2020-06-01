@@ -5,3 +5,9 @@ body {
 .container {
     height: 90vh;
 }
+
+.jumbotron {
+    margin-bottom: 0rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}

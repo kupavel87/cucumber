@@ -1,30 +1,5 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <form action="{{ url_for('purchase.add_voucher') }}" method="POST">
-        {{ form.hidden_tag() }}
-        <div class="form-group row">
-            {{ form.fn.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fn() }}</div>
-        </div>
-        <div class="form-group row">
-            {{ form.fd.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fd() }}</div>
-        </div>
-        <div class="form-group row">
-            {{ form.fp.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fp() }}</div>
-        </div>
-        <div class="form-group row">
-            {{ form.fdate.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fdate() }}</div>
-        </div>
-        <div class="form-group row">
-            {{ form.fsum.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fsum() }}</div>
-        </div>
-        <p>{{ form.submit() }}</p>
-    </form>
-</div>
+<a role="button" class="btn btn-success btn-lg" href="{{ url_for('purchase.add') }}">Добавить чек</a>
 {% endblock %}

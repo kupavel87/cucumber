@@ -16,8 +16,8 @@ class CreateShoppingListForm(FlaskForm):
     list_id = StringField('list_id', render_kw={"class": "form-control", "hidden": ""})
     name = StringField('Название', validators=[DataRequired()], render_kw={
                        "class": "form-control", "onClick": "this.select();"})
-    favorit = BooleanField('Важный', default=False, render_kw={'class': 'checkbox'})
-    private = BooleanField('Личный', default=True, render_kw={'class': 'checkbox'})
+    favorit = BooleanField('Важный', default=False, render_kw={'class': 'form-check-input'})
+    private = BooleanField('Личный', default=True, render_kw={'class': 'form-check-input'})
     search = StringField('Поиск', render_kw={"class": "form-control"})
     access = FieldList(FormField(RoleForm))
     submit = SubmitField('submit', render_kw={"class": "btn btn-success"})
@@ -29,8 +29,8 @@ class CreateShoppingListForm(FlaskForm):
             self.list_id.data = kwargs.pop('list_id', '')
             self.favorit.data = kwargs.pop('favorit', False)
             self.private.data = kwargs.pop('private', True)
-            users_role = kwargs.get('access', '')
-            for user in kwargs.get('users', []):
+            users_role = kwargs.pop('access', '')
+            for user in kwargs.pop('users', []):
                 role = RoleForm()
                 role.id = user.id
                 role.name = user.username

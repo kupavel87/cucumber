@@ -2,7 +2,7 @@ from flask import Blueprint, flash, render_template, redirect, url_for, request,
 from werkzeug.exceptions import BadRequestKeyError
 
 from webapp.admin.forms import UserForm
-from webapp.catalog.models import Catalog
+from webapp.catalog.models import Catalog, Product
 from webapp.shopping.models import Shopping_list, List_access
 from webapp.user.decorators import admin_required
 from webapp.user.models import User
@@ -10,17 +10,19 @@ from webapp.db import db
 
 blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 
+chapters = {
+    'users': {'name': 'Пользователи', 'link': 'admin.users', 'url_get': 'user.get'},
+    'catalog': {'name': 'Каталог', 'link': 'admin.catalog', 'url_get': 'catalog.get'},
+    'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list', 'url_get': 'admin.index'},
+    'products': {'name': 'Продукты', 'link': 'admin.products', 'url_get': 'admin.index'},
+}
+
 
 @blueprint.route('/')
 @admin_required
 def index():
     title = 'Админка'
-    links = {
-        'users': {'name': 'Пользователи', 'link': 'admin.users'},
-        'catalog': {'name': 'Каталог', 'link': 'admin.catalog'},
-        'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list'},
-    }
-    return render_template('admin/index.html', page_title=title, links=links)
+    return render_template('admin/index.html', page_title=title, chapters=chapters)
 
 
 @blueprint.route('/users', methods=['GET', 'POST'])
@@ -51,7 +53,7 @@ def users():
 @admin_required
 def catalog():
     catalog = Catalog.query.filter_by(parent_id=None)
-    html = render_template('admin/catalog.html', catalog=catalog)
+    html = render_template('admin/catalog2.html', catalog=catalog)
     return jsonify(html=html)
 
 
@@ -60,4 +62,12 @@ def catalog():
 def shopping_list():
     shopping_list = Shopping_list.query.all()
     html = render_template('admin/shopping_list.html', shopping_list=shopping_list)
+    return jsonify(html=html)
+
+
+@blueprint.route('/products')
+@admin_required
+def products():
+    products = Product.query.all()
+    html = render_template('admin/products.html', products=products)
     return jsonify(html=html)

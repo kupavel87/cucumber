@@ -1,0 +1,151 @@
+<div class="modal fade" id="ChooseShop" tabindex="-1" role="dialog" aria-labelledby="ChooseShopLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ChooseShopLabel">Выбор магазина</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6 shop-list"></div>
+                    <div class="col-6">
+                        <form id="addShop">
+                            {{ shop_form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ shop_form.name.label() }}
+                                {{ shop_form.name() }}
+                            </div>
+                            <div class="form-group">
+                                {{ shop_form.address.label() }}
+                                {{ shop_form.address() }}
+                            </div>
+                            <div class="form-group">
+                                {{ shop_form.inn.label() }}
+                                {{ shop_form.inn() }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row w-100 text-danger shop-message"></div>
+                <div class="row w-100">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-success btn-block choose-shop-done">Выбрать</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-warning btn-block add-shop">Создать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ChooseProduct" tabindex="-1" role="dialog" aria-labelledby="ChooseProductLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ChooseProductLabel">Выбор товара</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6 product-list"></div>
+                    <div class="col-6">
+                        <form id="addProduct">
+                            {{ product_form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ product_form.name.label() }}
+                                {{ product_form.name() }}
+                            </div>
+                            <div class="form-group">
+                                {{ product_form.code.label() }}
+                                {{ product_form.code() }}
+                            </div>
+                            <div class="form-group">
+                                {{ product_form.catalog_id.label() }}
+                                {{ product_form.catalog_id() }}
+                            </div>
+                            <div class="form-group">
+                                {{ product_form.pen_name.label() }}
+                                {{ product_form.pen_name() }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row w-100 text-danger product-message"></div>
+                <div class="row w-100">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-block btn-success choose-product-done">Выбрать</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-warning btn-block add-product">Создать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ChoosePrice" tabindex="-1" role="dialog" aria-labelledby="ChoosePriceLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ChoosePriceLabel">Выбор цены</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6 price-list"></div>
+                    <div class="col-6">
+                        <form id="addPrice">
+                            {{ price_form.hidden_tag() }}
+                            <div class="form-row">
+                                {{ price_form.shop_id.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.shop_id(disabled='') }}</div>
+                            </div>
+                            <div class="form-row">
+                                {{ price_form.product_id.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.product_id(disabled='') }}</div>
+                            </div>
+                            <div class="form-row">
+                                {{ price_form.date.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.date(readonly='') }}</div>
+                            </div>
+                            <div class="form-row">
+                                {{ price_form.price.label(class_="col-4 col-form-label") }}
+                                <div class="col-8">{{ price_form.price(readonly='') }}</div>
+                            </div>
+                            <div class="form-row mb-2 mt-2">
+                                <div class="form-check offset-4 col-8">
+                                    {{ price_form.discount() }}
+                                    {{ price_form.discount.label(class_="form-check-label") }}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row w-100 text-danger price-message"></div>
+                <div class="row w-100">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-success btn-block choose-price-done">Выбрать</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-warning btn-block add-price">Создать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

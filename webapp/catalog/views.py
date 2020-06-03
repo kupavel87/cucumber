@@ -2,9 +2,10 @@ from flask import Blueprint, flash, render_template, redirect, url_for, request,
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import BadRequestKeyError
 
-from webapp.catalog.forms import CreateCatalog, CreateShop, CreateProduct, CreatePrice
-from webapp.catalog.models import Catalog, Shop, Product, Price, Pen_name
+from webapp.catalog.forms import CreateCatalog, CreateProduct, CreatePrice
+from webapp.catalog.models import Catalog, Product, Price, Pen_name
 from webapp.db import db
+from webapp.purchase.models import Shop
 from webapp.user.decorators import admin_required
 from flask_login import login_required
 
@@ -106,33 +107,6 @@ def delete():
     return jsonify(status='ok')
 
 
-@blueprint.route('/shops')
-@login_required
-def shops():
-    shops = Shop.query.all()
-    html = render_template('catalog/shops.html', shops=shops)
-    return jsonify(html=html)
-
-
-@blueprint.route('/add_shop', methods=['POST'])
-@login_required
-def add_shop():
-    form = CreateShop()
-    if form.validate():
-        if form.id.data:
-            pass
-        else:
-            new_shop = Shop(name=form.name.data, address=form.address.data, inn=form.inn.data)
-            db.session.add(new_shop)
-            text = "Добавлен магазин {}".format(new_shop.name)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            return jsonify(status='error', text="Ошибка: Магазин {} уже существует".format(new_shop.name))
-        return jsonify(status="ok", text=text)
-    return jsonify(status="error", text="Ошибка данных")
-
-
 @blueprint.route('/products')
 @login_required
 def products():
@@ -149,16 +123,18 @@ def products():
 @login_required
 def add_product():
     form = CreateProduct()
+    print(request.form)
     catalog = Catalog.query.filter_by(parent_id=None).all()
     choises = []
     if len(catalog):
         choises.extend(CatalogModel_for_select(catalog))
     form.catalog_id.choices = choises
     if form.validate():
+        print('Good')
         if form.id.data:
             pass
         else:
-            new_product = Product(name=form.name.data, code=form.code.data, catalog_id=form.catalog_id.data)
+            new_product = Product(name=form.name.data, code=form.code.data or None, catalog_id=form.catalog_id.data)
             db.session.add(new_product)
             text = "Добавлен товар {}".format(new_product.name)
         try:
@@ -196,7 +172,6 @@ def prices():
 @login_required
 def add_price():
     form = CreatePrice()
-    print(request.form)
     # shop_choises = []
     # for shop in Shop.query.all():
     #     shop_choises.append((shop.id, shop.name))
@@ -213,7 +188,6 @@ def add_price():
     form.shop_id.choices = [(shop_id, shop_id)]
     form.product_id.choices = [(product_id, product_id)]
     if form.validate():
-        print('Good')
         if form.id.data:
             pass
         else:

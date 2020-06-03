@@ -56,7 +56,10 @@ function check_status() {
 
         if ($(this).parents('.form-group').find('#id').val() == 0) {
             main_status = false;
+        } else {
+            $(this).parents('.form-group').find('.collapse').collapse('hide');
         }
+        
     });
     $('#mainForm #submit').attr('disabled', !main_status);
 };
@@ -64,7 +67,7 @@ function check_status() {
 setTimeout(check_status, 50);
 
 function update_shops() {
-    $.get("{{ url_for('catalog.shops') }}", function (data) {
+    $.get("{{ url_for('purchase.shops') }}", function (data) {
         $('.shop-list').html(data.html);
         $('#ChooseShop').modal('show');
     });
@@ -79,7 +82,7 @@ $('.add-shop').click(function () {
     console.log('add-shop');
     $.ajax({
         type: "POST",
-        url: "{{ url_for('catalog.add_shop') }}",
+        url: "{{ url_for('purchase.add_shop') }}",
         data: $('#addShop').serialize(),
         success: function (data) {
             if (data.status == "ok") {
@@ -142,7 +145,8 @@ $('.add-product').click(function () {
         data: $('#addProduct').serialize(),
         success: function (data) {
             if (data.status == "ok") {
-                update_products($("#ChooseProduct #catalogSelect").val());
+                var val =$("#ChooseProduct #catalog_id").val();
+                update_products(val);
                 $('#addProduct').trigger("reset");
             };
             $('.product-message').html(data.text);
@@ -207,6 +211,7 @@ $('.product-price-btn').click(function () {
     event.preventDefault();
     $('#ChoosePrice #date').val($('#mainForm #date').val().slice(0, 10));
     $('#ChoosePrice #price').val($(this).parents('.list-group-item').find('.price_value').val());
+    $('#ChoosePrice #discount').prop('checked', false);;
     $('.choose-price-done').attr('for', $(this).parents('.collapse').attr('id'));
     $('.price-message').html("");
     update_prices($(this).parents('ul').find('.product_id').val());
@@ -262,6 +267,7 @@ $('#submit').click(function (event) {
     event.preventDefault();
     var data = {
         'date': $('#mainForm #date').val(),
+        'process_id': $('#mainForm #process_id').val(),
         'shop_id': $('#mainForm #shop_id').val(),
         'total': $('#mainForm #total').val(),
         'items': []
@@ -288,6 +294,7 @@ $('#submit').click(function (event) {
         dataType: "json",
         success: function (data) {
             console.log(data);
+            location.href = "{{ url_for('purchase.index') }}";
         },
         error: function (error) {
             console.log(error);

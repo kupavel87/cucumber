@@ -9,21 +9,6 @@ class CreateCatalog(FlaskForm):
     parent_id = SelectField('Родитель', coerce=int, render_kw={"class": "form-control"})
 
 
-class CreateShop(FlaskForm):
-    id = StringField('id', render_kw={"class": "form-control", "hidden": ""})
-    inn = StringField('ИНН', render_kw={"class": "form-control"})
-    name = StringField('Название', validators=[DataRequired()], render_kw={"class": "form-control"})
-    address = StringField('Адрес', render_kw={"class": "form-control"})
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        shop = kwargs.pop('shop', '')
-        if shop and not shop.id:
-            self.inn.data = shop.inn
-            # self.name = shop.name
-            # self.address = shop.address
-
-
 class CreateProduct(FlaskForm):
     id = StringField('id', render_kw={"class": "form-control", "hidden": ""})
     name = StringField('Название', validators=[DataRequired()], render_kw={"class": "form-control"})
@@ -38,4 +23,4 @@ class CreatePrice(FlaskForm):
     product_id = SelectField('Товар', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
     date = DateField('Дата', validators=[DataRequired()], format='%d.%m.%Y', render_kw={"class": "form-control"})
     price = FloatField('Сумма', validators=[DataRequired()], render_kw={"class": "form-control"})
-    discount = BooleanField('Акционная цена', default=True, render_kw={'class': 'form-check-input'})
+    discount = BooleanField('Акционная цена', default=False, render_kw={'class': 'form-check-input'})

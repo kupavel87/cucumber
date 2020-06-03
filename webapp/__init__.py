@@ -8,6 +8,7 @@ from webapp.db import db
 from webapp.admin.views import blueprint as admin_blueprint
 from webapp.catalog.models import Catalog
 from webapp.catalog.views import blueprint as catalog_blueprint
+from webapp.celery.tasks import celery
 from webapp.main.views import blueprint as main_blueprint
 from webapp.purchase.models import Purchase
 from webapp.purchase.views import blueprint as purchase_blueprint
@@ -15,6 +16,18 @@ from webapp.shopping.models import Shopping_list
 from webapp.shopping.views import blueprint as shopping_blueprint
 from webapp.user.models import User
 from webapp.user.views import blueprint as user_blueprint
+
+
+def make_celery(app, celery):
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
 
 
 def create_app():
@@ -39,5 +52,9 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(user_id)
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template('404.html'), 404
 
     return app

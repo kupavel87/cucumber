@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex align-items-center">
+    <h3>
+    {% if status %}
+        {{ status }}
+    {% else %}
+        Получение информации о чеке
+    {% endif %}
+    </h3>
+    <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    setTimeout(function() {
+        location.reload();
+    }, 10000);
+</script>
+{% endblock %}

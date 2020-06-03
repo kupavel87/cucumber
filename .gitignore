@@ -133,4 +133,4 @@ dmypy.json
 config.py
 *.db
 *.swp
-temp/
+temp/*

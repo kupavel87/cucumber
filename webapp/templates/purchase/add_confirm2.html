@@ -8,6 +8,7 @@
 <div class="row justify-content-around mt-2">
     <form method="POST" class="col-8" id="mainForm">
         {{ form.hidden_tag() }}
+        {{ form.process_id() }}
         <div class="form-group row">
             <div class="col-lg-6 mb-1 d-flex justify-content-start">
                 {{ form.date.label(class_='col-auto col-form-label') }}
@@ -26,7 +27,7 @@
             </div>
         </div>
         {% for item in form.rows %}
-        <div class="form-group">
+        <div class="form-group title-row">
             <div class="form-row">
                 <div class="input-group col-lg-8 mb-1">
                     {{ item.id() }}
@@ -57,14 +58,14 @@
                                 {{ item.product_id() }}
                                 <span class="input-group-prepend checkProduct"></span>
                                 <div class="flex-grow-1 mr-2 product-name">{{ item.product_id.label() }}</div>
-                                <button class="btn btn-warning btn-sm product-name-btn">Выбрать</button>
+                                <button type="button" class="btn btn-warning btn-sm product-name-btn">Выбрать</button>
                             </li>
                             <li class="list-group-item d-flex">
                                 {{ item.price_value() }}
                                 {{ item.price_id() }}
                                 <span class="input-group-prepend checkPrice"></span>
                                 <div class="flex-grow-1 mr-2 product-price">{{ item.price_id.label() }}</div>
-                                <button class="btn btn-warning btn-sm product-price-btn">Выбрать</button>
+                                <button type="button" class="btn btn-warning btn-sm product-price-btn">Выбрать</button>
                             </li>
                         </ul>
                     </div>
@@ -85,6 +86,6 @@
 
 {% block script %}
 <script>
-    {% include "purchase/add_confirm_script.js" %}
+    {% include('purchase/add_confirm_script.js') %}
 </script>
 {% endblock %}

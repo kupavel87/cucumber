@@ -1,8 +1,8 @@
 from datetime import datetime
 
+from sqlalchemy.orm import relationship
+
 from webapp.db import db
-from webapp.catalog.models import Catalog
-from webapp.user.models import User
 
 
 class Shopping_list(db.Model):
@@ -11,9 +11,9 @@ class Shopping_list(db.Model):
     favorit = db.Column(db.Boolean, default=False, nullable=False)
     private = db.Column(db.Boolean, default=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = db.relationship("User")
-    items = db.relationship('Shopping_item', lazy='dynamic')
-    access = db.relationship('List_access')
+    author = relationship("User")
+    items = relationship('Shopping_item', lazy='dynamic')
+    access = relationship('List_access')
     date_create = db.Column(db.DateTime, default=datetime.utcnow)
     date_change = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -35,13 +35,13 @@ class Shopping_list(db.Model):
         return access_dict
 
     def __repr__(self):
-        return '<Shopping list {}>'.format(self.name)
+        return '<Shopping list {}>'.format(self.id)
 
 
 class Shopping_item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     catalog_id = db.Column(db.Integer, db.ForeignKey('catalog.id'))
-    catalog = db.relationship("Catalog")
+    catalog = relationship("Catalog")
     quantity = db.Column(db.Integer)
     list_id = db.Column(db.Integer, db.ForeignKey('shopping_list.id'))
 
@@ -50,11 +50,14 @@ class Shopping_item(db.Model):
         return self.catalog.name
 
     def __repr__(self):
-        return '<{} - {}>'.format(self.name, self.quantity)
+        return '<Shopping item {}>'.format(self.id)
 
 
 class List_access(db.Model):
     list_id = db.Column(db.Integer, db.ForeignKey('shopping_list.id'), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     role = db.Column(db.Integer)
-    user = db.relationship('User')
+    user = relationship('User')
+
+    def __repr__(self):
+        return 'List access {} : {}'.format(self.list_id, self.user_id)

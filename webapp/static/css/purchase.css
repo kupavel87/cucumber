@@ -14,6 +14,17 @@
     padding: 0rem;
 }
 
-.form-group {
+.modal .form-group {
+    margin-right: 15px;
+}
+.title-row {
     margin-right: -15px;
+}
+
+.modal .form-row {
+    margin: 0px;
+}
+
+.product-list {
+    padding-left: 25px;
 }

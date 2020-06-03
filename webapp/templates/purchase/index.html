@@ -2,4 +2,21 @@
 
 {% block content %}
 <a role="button" class="btn btn-success btn-lg" href="{{ url_for('purchase.add') }}">Добавить чек</a>
+<h3>Чеки в обработке</h3>
+<div class="row row-cols-1 row-cols-md-3">
+    {% for process in processes %}
+    <div class="col mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <a href="{{ url_for('purchase.waiting', fp=process.fp) }}" class="d-flex justify-content-between">
+                    {{ process.fsum }} ({{ process.fdate }})
+                    <svg class="bi bi-arrow-right-circle-fill text-success" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-8.354 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L9.793 7.5H5a.5.5 0 0 0 0 1h4.793l-2.147 2.146z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="text-danger">Ошибка. Не получилось получить чек.</h3>
+<p>Проверьте правильность введенных данных и повторите попытку позже.</p>
+<form div="d-flex justify-content-center">
+    <div class="form-group">
+        <label for="fn" class="col-3">fn</label>
+        <div class="col-9" id="fn">{{ process.fn }}</div>
+    </div>
+    <div class="form-group">
+        <label for="fd" class="col-3">fd</label>
+        <div class="col-9" id="fd">{{ process.fd }}</div>
+    </div>
+    <div class="form-group">
+        <label for="fp" class="col-3">fp</label>
+        <div class="col-9" id="fp">{{ process.fp }}</div>
+    </div>
+    <div class="form-group">
+        <label for="fdate" class="col-3">fdate</label>
+        <div class="col-9" id="fdate">{{ process.fdate }}</div>
+    </div>
+    <div class="form-group">
+        <label for="fsum" class="col-3">fsum</label>
+        <div class="col-9" id="fsum">{{ process.fsum }}</div>
+    </div>
+    <button type="submit" class="btn btn-success">Повторить</button>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    setTimeout(location.reload, 10000);
+</script>
+{% endblock %}

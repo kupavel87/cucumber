@@ -3,6 +3,7 @@ from werkzeug.exceptions import BadRequestKeyError
 
 from webapp.admin.forms import UserForm
 from webapp.catalog.models import Catalog, Product
+from webapp.purchase.models import Purchase
 from webapp.shopping.models import Shopping_list, List_access
 from webapp.user.decorators import admin_required
 from webapp.user.models import User
@@ -15,6 +16,7 @@ chapters = {
     'catalog': {'name': 'Каталог', 'link': 'admin.catalog', 'url_get': 'catalog.get'},
     'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list', 'url_get': 'admin.index'},
     'products': {'name': 'Продукты', 'link': 'admin.products', 'url_get': 'admin.index'},
+    'purchase': {'name': 'Чеки', 'link': 'admin.purchases', 'url_get': 'admin.index'},
 }
 
 
@@ -70,4 +72,13 @@ def shopping_list():
 def products():
     products = Product.query.all()
     html = render_template('admin/products.html', products=products)
+    return jsonify(html=html)
+
+
+@blueprint.route('/purchases')
+@admin_required
+def purchases():
+    purchases = Purchase.query.all()
+    print(purchases)
+    html = render_template('admin/purchases.html', purchases=purchases)
     return jsonify(html=html)

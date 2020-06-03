@@ -1,81 +1,124 @@
 from datetime import datetime
-import json
 import os
 
-from flask import Blueprint, flash, render_template, redirect, url_for, request, jsonify
-from sqlalchemy import desc
+from flask import Blueprint, abort, flash, render_template, redirect, url_for, request, jsonify
+from flask_login import login_required, current_user
+from sqlalchemy.exc import IntegrityError
 
-from webapp.catalog.forms import CreateShop, CreateProduct, CreatePrice
-from webapp.catalog.models import Shop, Product, Price, Pen_name
-from webapp.purchase.forms import AddVoucherForm, AddVoucherQRForm, VoucherConfirm, VoucherRow
+from webapp.catalog.forms import CreateProduct, CreatePrice
 from webapp.db import db
+from webapp.purchase.forms import AddVoucherForm, AddVoucherQRForm, CreateShop, VoucherConfirm, VoucherRow
+from webapp.purchase.models import Purchase, Purchase_Item, Process_Purchase, Cash_desk, Shop
+from webapp.celery.utils import parser_answer, parser_QR
+from webapp.celery.tasks import Check_Voucher
 
 blueprint = Blueprint('purchase', __name__, url_prefix='/purchase')
 
 
-def parser_answer(answer):
-    date = datetime.strptime(answer['document']['receipt']['dateTime'], '%Y-%m-%dT%H:%M:%S')
-    total = answer['document']['receipt']['totalSum'] / 100
-    shop_inn = answer['document']['receipt']['userInn']
-    items = answer['document']['receipt']['items']
-
-    shop = Shop.query.filter_by(inn=shop_inn).first()
-    if not shop:
-        shop = Shop(inn=shop_inn)
-    products = []
-    for item in items:
-        name = item['name']
-        code = name[:13]
-        product = ''
-        if code.isnumeric():
-            product = Product.query.filter_by(code=code).first()
-        if not product:
-            product = Product.query.filter_by(name=name).first()
-        # if not product:
-        #     product = Pen_name.query.filter_by(name=name).first().product
-
-        value = item['price'] / 100
-        if product:
-            price = Price.query.filter_by(product_id=product.id, shop_id=shop.id, price=value, discount=True).first()
-            if not price:
-                last_price = Price.query.filter_by(product_id=product.id, shop_id=shop.id,
-                                                   discount=False).order_by(desc(Price.date)).first()
-                if last_price and last_price.price == value:
-                    price = last_price
-                else:
-                    price = Price(date=date, product_id=product.id, shop_id=shop.id, price=value)
-        else:
-            product = Product(name=name)
-            price = Price(date=date, shop_id=shop.id, price=value)
-        products.append({'product': product, 'price': price, 'quantity': item['quantity'], 'total': item['sum'] / 100})
-
-    return date, total, shop, products
-
-
 @blueprint.route('/')
 def index():
-    return render_template('purchase/index.html')
+    processes = Process_Purchase.query.filter_by(author_id=current_user.id).all()
+    return render_template('purchase/index.html', processes=processes)
+
+
+@blueprint.route('/shops')
+@login_required
+def shops():
+    shops = Shop.query.all()
+    html = render_template('purchase/shops.html', shops=shops)
+    return jsonify(html=html)
+
+
+@blueprint.route('/add_shop', methods=['POST'])
+@login_required
+def add_shop():
+    form = CreateShop()
+    if form.validate():
+        if form.id.data:
+            pass
+        else:
+            new_shop = Shop(name=form.name.data, address=form.address.data, inn=form.inn.data)
+            db.session.add(new_shop)
+            text = "Добавлен магазин {}".format(new_shop.name)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            return jsonify(status='error', text="Ошибка: Магазин {} уже существует".format(new_shop.name))
+        return jsonify(status="ok", text=text)
+    return jsonify(status="error", text="Ошибка данных")
 
 
 @blueprint.route('/add', methods=['GET', 'POST'])
+@login_required
 def add():
     form = AddVoucherForm()
     form2 = AddVoucherQRForm()
-    if form.validate():
-        file_name = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..', 'temp/answer.json'))
-        with open(file_name) as json_file:
-            answer = json.load(json_file)
-        date, total, shop, products = parser_answer(answer)
-        form3 = VoucherConfirm(date=date, total=total, shop=shop, products=products)
-        shop_form = CreateShop(shop=shop)
-        product_form = CreateProduct()
-        price_form = CreatePrice()
-        return render_template('purchase/add_confirm2.html', form=form3, shop_form=shop_form, product_form=product_form, price_form=price_form,
-                               date=date, total=total, shop=shop, products=products)
+    if form.validate_on_submit():
+        process = Process_Purchase.query.filter_by(fp=form.fp.data).first()
+        if not process:
+            process = Process_Purchase(author_id=current_user.id, fn=form.fn.data, fd=form.fd.data,
+                                       fp=form.fp.data, fdate=form.fdate.data, fsum=form.fsum.data, attempt=0)
+            db.session.add(process)
+        else:
+            process.attempt = 0
+        db.session.commit()
+        print("Start check voucher id={}".format(process.id))
+        Check_Voucher.delay(process_id=process.id)
+        return redirect(url_for('purchase.waiting', fp=process.fp))
+    if form2.validate_on_submit():
+        parser_data = parser_QR(form2.qr_str.data)
+        process = Process_Purchase.query.filter_by(fp=parser_data['fp']).first()
+        if not process:
+            process = Process_Purchase(author_id=current_user.id, fn=parser_data['fn'], fd=parser_data['fd'],
+                                       fp=parser_data['fp'], fdate=parser_data['fdate'], fsum=parser_data['fsum'], attempt=0)
+            db.session.add(process)
+            db.session.commit()
+        Check_Voucher.delay(process_id=process.id)
+        return redirect(url_for('purchase.waiting', fp=process.fp))
     return render_template('purchase/add.html', form=form, form2=form2)
 
 
+@blueprint.route('/waiting/<fp>')
+@login_required
+def waiting(fp):
+    process = Process_Purchase.query.filter_by(fp=fp).first()
+    if process.author_id == current_user.id:
+        status = process.status()
+        if status == 'ok':
+            date, total, shop, products = parser_answer(process.link)
+            form3 = VoucherConfirm(process_id=process.id, date=date, total=total, shop=shop, products=products)
+            shop_form = CreateShop(shop=shop)
+            product_form = CreateProduct()
+            price_form = CreatePrice()
+            return render_template('purchase/add_confirm2.html', form=form3, shop_form=shop_form, product_form=product_form, price_form=price_form,
+                                   date=date, total=total, shop=shop, products=products)
+        if status == 'error':
+            return render_template('purchase/error.html', process=process)
+        return render_template('purchase/waiting.html', status=status)
+    abort(404)
+
+
 @blueprint.route('/confirm', methods=['POST'])
+@login_required
 def confirm():
-    print(request.json)
-    return redirect(url_for('purchase.add'))
+    form = request.json
+    process = Process_Purchase.query.filter_by(id=form['process_id']).first()
+    if process:
+        old_purchase = Purchase.query.filter_by(fp=process.fp).count()
+        if not old_purchase:
+            new_purchase = Purchase(date=datetime.strptime(form['date'], '%d.%m.%Y %H:%M'), fp=process.fp,
+                                    shop_id=form['shop_id'], total=form['total'], author_id=current_user.id)
+            db.session.add(new_purchase)
+            db.session.commit()
+            for item in form['items']:
+                new_purchase_item = Purchase_Item(purchase_id=new_purchase.id, price_id=item['price_id'],
+                                                  quantity=item['quantity'], total=item['total'])
+                db.session.add(new_purchase_item)
+            cash_desk = Cash_desk.query.filter_by(fn=process.fn).count()
+            if not cash_desk:
+                cash_desk = Cash_desk(shop_id=form['shop_id'], fn=process.fn)
+                db.session.add(cash_desk)
+            db.session.commit()
+            print("Voucher id={}".format(new_purchase.id))
+            return jsonify(status='ok')
+    return jsonify(status='error')

@@ -17,7 +17,7 @@
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             {% if current_user.is_admin %}
-            <a class="dropdown-item" href="{{ url_for('admin.index') }}">Админка</a>
+            <a class="dropdown-item" href="{{ url_for('admin.index') }}" target="_blank">Админка</a>
             {% endif %}
             <a class="dropdown-item" href="{{ url_for('shopping.index') }}">Списки покупок</a>
             <a class="dropdown-item" href="{{ url_for('user.logout') }}">Выйти</a>
@@ -26,7 +26,7 @@
       {% else %}
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="btn btn-primary" href="{{ url_for('user.login') }}">Войти</a>
+            <a class="btn btn-primary" href="{{ url_for('user.login', next=request.path) }}">Войти</a>
           </li>
         </ul>
       {% endif %}

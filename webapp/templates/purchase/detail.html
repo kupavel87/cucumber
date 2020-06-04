@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('purchase.index') }}">Все чеки</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Подробно</li>
+    </ol>
+</nav>
+{% include('admin/purchase_items.html') %}
+{% endblock %}

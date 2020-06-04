@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block brand %}
+<a class="navbar-brand" href="{{ url_for('admin.index') }}">Анализ покупок</a>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div role="alert" aria-live="polite" aria-atomic="true">
+    <div style="position: absolute; top: 50; right: 0;" class="my-toast"></div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3 my-nav">
+        <div class="nav flex-column nav-pills border rounded shadow" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            {% for id, val in chapters.items() %}
+            <a class="nav-link" data-toggle="pill" href="{{ url_for(val.link) }}" role="tab">{{ val.name }}</a>
+            {% endfor %}
+        </div>
+        <select class="form-control mb-2">
+            <option value="0" selected>Выбор раздела</option>
+            {% for id, val in chapters.items() %}
+            <option value="{{ url_for(val.link) }}">{{ val.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-sm-9 h-sm-75">
+        <div class='overflow-auto border rounded shadow'>
+            <div class="lvl-1">
+                <h4 class="text-center">Выберите раздел</h4>
+            </div>
+            <div class="lvl-2" style="display: none;">
+                <button type="button" class="btn btn-secondary btn-block back-btn">Назад</button>
+                <div class="lvl-2-content"></div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-success btn-lg btn-block mt-3 shadow add-btn" style="display: none;">Добавить</button>
+    </div>
+</div>
+
+<div class="modal fade" id="CreateModal" tabindex="-1" role="dialog" aria-labelledby="CreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script>
+    $('.back-btn').click(function () {
+        show_lvl_1();
+    })
+
+    $('.my-nav .nav-link').click(function () {
+        // event.preventDefault();
+        $.get($(this).attr('href'), function (data) {
+            $(".lvl-1").html(data.html);
+            show_lvl_1();
+        });
+    });
+
+    $('.my-nav select').change(function () {
+        var url = $(this).val();
+        if (url != "0") {
+            $.get(url, (data) => {
+                $(".lvl-1").html(data.html);
+                show_lvl_1();
+            });
+        };
+    })
+</script>
+{% endblock %}

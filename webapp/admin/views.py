@@ -1,9 +1,10 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request, jsonify
+from flask_login import login_required, current_user
 from werkzeug.exceptions import BadRequestKeyError
 
 from webapp.admin.forms import UserForm
 from webapp.catalog.models import Catalog, Product
-from webapp.purchase.models import Purchase
+from webapp.purchase.models import Purchase, Purchase_Item
 from webapp.shopping.models import Shopping_list, List_access
 from webapp.user.decorators import admin_required
 from webapp.user.models import User
@@ -24,7 +25,7 @@ chapters = {
 @admin_required
 def index():
     title = 'Админка'
-    return render_template('admin/index.html', page_title=title, chapters=chapters)
+    return render_template('admin/index2.html', page_title=title, chapters=chapters)
 
 
 @blueprint.route('/users', methods=['GET', 'POST'])
@@ -55,7 +56,7 @@ def users():
 @admin_required
 def catalog():
     catalog = Catalog.query.filter_by(parent_id=None)
-    html = render_template('admin/catalog2.html', catalog=catalog)
+    html = render_template('admin/catalog3.html', catalog=catalog)
     return jsonify(html=html)
 
 
@@ -81,4 +82,19 @@ def purchases():
     purchases = Purchase.query.all()
     print(purchases)
     html = render_template('admin/purchases.html', purchases=purchases)
+    return jsonify(html=html)
+
+
+@blueprint.route('/purchase_items', methods=['POST'])
+@login_required
+def purchase_items():
+    try:
+        id = request.form['id']
+    except BadRequestKeyError:
+        return "Error. Id not found."
+    purchase = Purchase.query.filter_by(id=id).first()
+    if current_user.is_admin or current_user.id == purchase.author_id:
+        html = render_template('admin/purchase_items.html', items=purchase.items)
+    else:
+        html = "Ошибка доступа"
     return jsonify(html=html)

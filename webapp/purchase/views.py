@@ -16,9 +16,10 @@ blueprint = Blueprint('purchase', __name__, url_prefix='/purchase')
 
 
 @blueprint.route('/')
+@login_required
 def index():
-    processes = Process_Purchase.query.filter_by(author_id=current_user.id).all()
-    return render_template('purchase/index.html', processes=processes)
+    # processes = Process_Purchase.query.filter_by(author_id=current_user.id).all()
+    return render_template('purchase/index.html', processes=current_user.processes, purchases=current_user.purchases)
 
 
 @blueprint.route('/shops')
@@ -119,6 +120,20 @@ def confirm():
                 cash_desk = Cash_desk(shop_id=form['shop_id'], fn=process.fn)
                 db.session.add(cash_desk)
             db.session.commit()
-            print("Voucher id={}".format(new_purchase.id))
+            os.remove(process.link)
+            db.session.delete(process)
+            db.session.commit()
+            flash("Добавлен чек {} на сумму {} из магазина {}".format(
+                new_purchase.fp, new_purchase.total, new_purchase.shop.name))
             return jsonify(status='ok')
+    flash("Ошибка добавления чека")
     return jsonify(status='error')
+
+
+@blueprint.route('/detail/<int:id>')
+@login_required
+def detail(id):
+    purchase = Purchase.query.filter_by(id=id).first()
+    if current_user.is_admin or current_user.id == purchase.author_id:
+        return render_template('purchase/detail.html', items=purchase.items.all())
+    return redirect(url_for('purchase.index'))

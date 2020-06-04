@@ -1,39 +1,42 @@
-<table class="table table-striped">
+<table class="table table-striped table-sm">
     <thead class="thead-dark">
         <tr class="text-center">
-            <th scope="col">id</th>
-            <th scope="col">Фп</th>
-            <th scope="col">Дата</th>
-            <th scope="col">Сумма</th>
-            <th scope="col">Магазин</th>
-            <th scope="col">Покупатель</th>
+            <th scope="col">Каталог</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        {% for item in purchases %}
-        <tr class="text-center">
-            <th scope="row">{{ item.id }}</th>
-            <td>{{ item.fp }}</td>
-            <td>{{ item.date }}</td>
-            <td>{{ item.total }}</td>
-            <td>{{ item.shop.name }}</td>
-            <td>{{ item.author.username }}</td>
-            <td class="d-flex justify-content-around">
-                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        {% for item in catalog recursive %}
+        <tr>
+            <td class="pl-md-5">
+                {% if item.get_level() == 0 %}
+                <div class="pl-0">
+                {% elif item.get_level() == 1 %}
+                <div class="pl-3">
+                {% else %}
+                <div class="pl-5">
+                {% endif %}
+                    {{ item.name }}
+                    {% if item.products.count() %}
+                    ({{ item.products.count() }})
+                    {% endif %}
+                </div>
+            </td>
+            <td>
+                <div class="btn-toolbar d-flex justify-content-end" role="toolbar">
                     <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="First group">
-                        <button type="button" class="btn btn-outline-dark edit-purchase" id="{{ item.id }}">
+                        <button type="button" class="btn btn-outline-dark btn-sm edit-catalog" link="{{ url_for('catalog.get', category_id=item.id) }}">
                             <svg class="bi bi-pencil-square" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                             </svg>
                         </button>
-                        <button type="button" class="btn btn-outline-dark del-purchase" id="{{ item.id }}">
+                        <button type="button" class="btn btn-outline-dark btn-sm del-catalog" id="{{ item.id }}">
                             <svg class="bi bi-trash-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z" />
                             </svg>
                         </button>
-                        <button type="button" class="btn btn-outline-dark btn-sm mr-2 enter-purchase" id="{{ item.id }}">
+                        <button type="button" class="btn btn-outline-dark btn-sm enter-catalog" id="{{ item.id }}">
                             <svg class="bi bi-box-arrow-in-right" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M8.146 11.354a.5.5 0 0 1 0-.708L10.793 8 8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z" />
                                 <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 1 8z" />
@@ -42,15 +45,24 @@
                         </button>
                     </div>
                 </div>
-
             </td>
         </tr>
+        {% if item.children %}
+        {{ loop(item.children) }}
+        {% endif %}
         {% endfor %}
     </tbody>
 </table>
 
 <script>
-    $(".enter-purchase").click(function () {
+    $('.edit-catalog').click(function () {
+        $.get($(this).attr('link'), function (data) {
+            $(".modal-content").html(data.html);
+            $('#CreateModal').modal('show');
+        });
+    });
+
+    $('.del-catalog').click(function () {
         var id = $(this).attr('id');
         var csrf_token = "{{ csrf_token() }}";
         $.ajax({
@@ -60,11 +72,11 @@
                     xhr.setRequestHeader("X-CSRFToken", csrf_token);
                 }
             },
-            url: "{{ url_for('admin.purchase_items') }}",
-            data: { "id": id},
+            url: "{{ url_for('catalog.delete') }}",
+            data: { 'id': id },
             success: function (data) {
-                $('.lvl-2-content').html(data.html);
-                show_lvl_1(false);
+                $('#CreateModal').modal('hide');
+                $('#chapter-list .active').click();
             },
             error: function (error) {
                 console.log(error);

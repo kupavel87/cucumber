@@ -57,6 +57,7 @@ class Purchase_Item(db.Model):
 class Process_Purchase(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = relationship('User', backref='processes')
     fn = db.Column(db.String(16), nullable=False)
     fp = db.Column(db.String(10), unique=True, index=True, nullable=False)
     fd = db.Column(db.String(10), nullable=False)

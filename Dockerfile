@@ -1,7 +1,7 @@
-FROM python:3.8.3-alpine
+FROM arm32v7/python:3.8-alpine
 
 WORKDIR /cucumber
-COPY . .
-RUN pip install -r requirements.txt && chmod +x run.sh
+COPY requirements.txt .
+RUN apk add --no-cache --upgrade bash && pip install -r requirements.txt
 
 ENV FLASK_APP webapp

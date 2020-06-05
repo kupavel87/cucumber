@@ -28,3 +28,17 @@
 .product-list {
     padding-left: 25px;
 }
+
+.my-nav select {
+    display: none;
+}
+
+@media (max-width: 720px) {
+    .my-nav .nav {
+        display: none;
+    }
+
+    .my-nav select {
+        display: inline-block;
+    }
+}

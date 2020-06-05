@@ -19,7 +19,8 @@ blueprint = Blueprint('purchase', __name__, url_prefix='/purchase')
 @login_required
 def index():
     # processes = Process_Purchase.query.filter_by(author_id=current_user.id).all()
-    return render_template('purchase/index.html', processes=current_user.processes, purchases=current_user.purchases)
+    # return render_template('purchase/index.html', processes=current_user.processes, purchases=current_user.purchases)
+    return render_template('purchase/index2.html', user=current_user)
 
 
 @blueprint.route('/shops')
@@ -30,9 +31,9 @@ def shops():
     return jsonify(html=html)
 
 
-@blueprint.route('/add_shop', methods=['POST'])
+@blueprint.route('/shops/add', methods=['POST'])
 @login_required
-def add_shop():
+def shops_add():
     form = CreateShop()
     if form.validate():
         if form.id.data:
@@ -49,9 +50,9 @@ def add_shop():
     return jsonify(status="error", text="Ошибка данных")
 
 
-@blueprint.route('/add', methods=['GET', 'POST'])
+@blueprint.route('/process/add', methods=['GET', 'POST'])
 @login_required
-def add():
+def process_add():
     form = AddVoucherForm()
     form2 = AddVoucherQRForm()
     if form.validate_on_submit():
@@ -61,7 +62,7 @@ def add():
                                        fp=form.fp.data, fdate=form.fdate.data, fsum=form.fsum.data, attempt=0)
             db.session.add(process)
         else:
-            process.attempt = 0
+            process.update(form.fn.data, form.fd.data, form.fdate.data, form.fsum.data)
         db.session.commit()
         print("Start check voucher id={}".format(process.id))
         Check_Voucher.delay(process_id=process.id)
@@ -76,26 +77,63 @@ def add():
             db.session.commit()
         Check_Voucher.delay(process_id=process.id)
         return redirect(url_for('purchase.waiting', fp=process.fp))
+    flash("ЧТо-то пошло не так")
     return render_template('purchase/add.html', form=form, form2=form2)
+
+
+@blueprint.route('/process/edit/', defaults={'fp': ''})
+@blueprint.route('/process/edit/<fp>')
+@login_required
+def process_edit(fp):
+    process = Process_Purchase.query.filter_by(fp=fp).first() if fp else False
+    if process and process.is_edit(current_user):
+        
+        form = AddVoucherForm(fn=process.fn, fd=process.fd, fp=process.fp, fdate=datetime.strptime(process.fdate, '%Y-%m-%d %H:%M'), fsum=process.fsum)
+        html = render_template('purchase/pre_add.html', form=form)
+    else:
+        form = AddVoucherForm()
+        form2 = AddVoucherQRForm()
+        html = render_template('purchase/pre_add.html', form=form, form2=form2)
+    return jsonify(html=html)
 
 
 @blueprint.route('/waiting/<fp>')
 @login_required
 def waiting(fp):
     process = Process_Purchase.query.filter_by(fp=fp).first()
-    if process.author_id == current_user.id:
+    if process.is_edit(current_user):
         status = process.status()
         if status == 'ok':
-            date, total, shop, products = parser_answer(process.link)
-            form3 = VoucherConfirm(process_id=process.id, date=date, total=total, shop=shop, products=products)
-            shop_form = CreateShop(shop=shop)
-            product_form = CreateProduct()
-            price_form = CreatePrice()
-            return render_template('purchase/add_confirm2.html', form=form3, shop_form=shop_form, product_form=product_form, price_form=price_form,
-                                   date=date, total=total, shop=shop, products=products)
+            if os.path.isfile(process.link):
+                date, total, shop, products = parser_answer(process.link)
+                form3 = VoucherConfirm(process_id=process.id, date=date, total=total, shop=shop, products=products)
+                shop_form = CreateShop(shop=shop)
+                product_form = CreateProduct()
+                price_form = CreatePrice()
+                return render_template('purchase/add_confirm2.html', form=form3, shop_form=shop_form, product_form=product_form, price_form=price_form,
+                                       date=date, total=total, shop=shop, products=products)
+            else:
+                status = 'error'
+                process.attempt = process.max_attempts
+                db.session.commit()
         if status == 'error':
             return render_template('purchase/error.html', process=process)
         return render_template('purchase/waiting.html', status=status)
+    abort(404)
+
+
+@blueprint.route('/repeat/<fp>')
+@login_required
+def repeat(fp):
+    process = Process_Purchase.query.filter_by(fp=fp).first()
+    if process.is_edit(current_user):
+        if os.path.isfile(process.link):
+            os.remove(process.link)
+        process.attempt = 0
+        db.session.commit()
+        print("Start check voucher id={}".format(process.id))
+        Check_Voucher.delay(process_id=process.id)
+        return redirect(url_for('purchase.waiting', fp=process.fp))
     abort(404)
 
 
@@ -134,6 +172,7 @@ def confirm():
 @login_required
 def detail(id):
     purchase = Purchase.query.filter_by(id=id).first()
-    if current_user.is_admin or current_user.id == purchase.author_id:
-        return render_template('purchase/detail.html', items=purchase.items.all())
-    return redirect(url_for('purchase.index'))
+    if purchase.is_edit(current_user):
+        html = render_template('purchase/detail.html', purchase=purchase)
+        return jsonify(status='ok', html=html)
+    return jsonify(status='error')

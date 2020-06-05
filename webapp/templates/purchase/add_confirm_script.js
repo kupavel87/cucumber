@@ -82,7 +82,7 @@ $('.add-shop').click(function () {
     console.log('add-shop');
     $.ajax({
         type: "POST",
-        url: "{{ url_for('purchase.add_shop') }}",
+        url: "{{ url_for('purchase.shops_add') }}",
         data: $('#addShop').serialize(),
         success: function (data) {
             if (data.status == "ok") {

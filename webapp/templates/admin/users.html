@@ -10,12 +10,12 @@
     </thead>
     <tbody>
         {% for user in users %}
-        <tr>
+        <tr class='text-center'>
             <th scope="row">{{ user.id }}</th>
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.role }}</td>
-            <td class="d-flex justify-content-around">
+            <td class="d-flex justify-content-end">
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group mr-2 btn-group-sm user-group" role="group" aria-label="First group">
                         <button type="button" class="btn btn-outline-dark edit-user" link="{{ url_for('user.get', id=user.id) }}">

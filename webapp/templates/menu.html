@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    {% block brand %}
+    {% if menu_type == 'user' %}
     <a class="navbar-brand" href="/">Анализ покупок</a>
-    {% endblock %}
+    {% else %}
+    <a class="navbar-brand" href="{{ url_for('admin.index') }}">Админка</a>
+    {% endif %}
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -19,9 +21,15 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 {% if current_user.is_admin %}
-                <a class="dropdown-item" href="{{ url_for('admin.index') }}" target="_blank">Админка</a>
+                    {% if menu_type == 'user' %}
+                    <a class="dropdown-item" href="{{ url_for('admin.index') }}" target="_blank">Админка</a>
+                    {% else %}
+                    <a class="dropdown-item" href="{{ url_for('main.index') }}">Главная</a>
+                    {% endif %}
+                    <hr>
                 {% endif %}
                 <a class="dropdown-item" href="{{ url_for('shopping.index') }}">Списки покупок</a>
+                <a class="dropdown-item" href="{{ url_for('purchase.index') }}">Мои чеки</a>
                 <a class="dropdown-item" href="{{ url_for('user.logout') }}">Выйти</a>
             </div>
         </div>

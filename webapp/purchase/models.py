@@ -38,6 +38,11 @@ class Purchase(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     author = relationship("User", backref='purchases')
 
+    def is_edit(self, user):
+        if self.author_id == user.id or user.is_admin():
+            return True
+        return False
+
     def __repr__(self):
         return '<{} - {}({})>'.format(self.shop.name, self.total, self.date)
 
@@ -80,3 +85,15 @@ class Process_Purchase(db.Model):
         if self.attempt == self.max_attempts:
             return 'error'
         return "Попытка {} получить подробную информацию".format(self.attempt)
+
+    def is_edit(self, user):
+        if self.author_id == user.id or user.is_admin():
+            return True
+        return False
+
+    def update(self, fn, fd, fdate, fsum):
+        self.fn = fn
+        self.fd = fd
+        self.fdate = fdate
+        self.fsum = fsum
+        self.attempt = 0

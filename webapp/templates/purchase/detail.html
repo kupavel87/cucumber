@@ -1,11 +1,115 @@
-{% extends "base.html" %}
+<div class="accordion" id="accordionDetail">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Общие значения
+                </button>
+            </h2>
+        </div>
 
-{% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url_for('purchase.index') }}">Все чеки</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Подробно</li>
-    </ol>
-</nav>
-{% include('admin/purchase_items.html') %}
-{% endblock %}
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionDetail">
+            <div class="card-body">
+                <form>
+                    <div class="row mb-1">
+                        <div class="col">
+                            <div class="form-row">
+                                <label for="fp" class="col col-form-label">fp</label>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" value="{{ purchase.fp }}" id="fp" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-row">
+                                <label for="date" class="col col-form-label">Дата</label>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" value="{{ purchase.date }}" id="date" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col">
+                            <div class="form-row">
+                                <label for="shop" class="col col-form-label">Магазин</label>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" value="{{ purchase.shop.name }}" id="shop" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-row">
+                                <label for="count" class="col col-form-label">Позиций</label>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" value="{{ purchase.items.count() }}" id="count" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-row">
+                                <label for="total" class="col col-form-label">Сумма</label>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" value="{{ purchase.total }}" id="total" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Товар в чеке
+                </button>
+            </h2>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionDetail">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr class="text-center">
+                            <th scope="col">id</th>
+                            <th scope="col">Продукт</th>
+                            <th scope="col">Цена</th>
+                            <th scope="col">Количество</th>
+                            <th scope="col">Итого</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in purchase.items.all() %}
+                        <tr class="text-center">
+                            <th scope="row">{{ item.id }}</th>
+                            <td class="text-left">{{ item.price.product.name }}</td>
+                            <td>{{ item.price.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.total }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Права для пользователей
+                </button>
+            </h2>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionDetail">
+            <div class="card-body">
+                Здесь будут настройки прав
+            </div>
+        </div>
+    </div>
+</div>

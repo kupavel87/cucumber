@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, DateTimeField, DecimalField, BooleanField, TextAreaField, IntegerField, FieldList, FormField, FloatField, Label, Form
 from wtforms.validators import DataRequired
-from wtforms import validators
 
 from webapp.catalog.models import Product, Price
 

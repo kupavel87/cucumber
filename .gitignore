@@ -130,7 +130,6 @@ dmypy.json
 
 # kupavel
 .vscode/
-config.py
 *.db
 *.swp
 temp/*

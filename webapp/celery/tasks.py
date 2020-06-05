@@ -1,4 +1,5 @@
 import json
+import os
 
 from celery import Celery
 from flask import current_app
@@ -27,15 +28,18 @@ def Check_Voucher(process_id):
 @celery.task
 def Get_Voucher_Detail(process_id):
     process = Process_Purchase.query.filter_by(id=process_id).first()
-    if process.attempt < process.max_attempts:
-        answer = get_voucher(fn=process.fn, fd=process.fd, fp=process.fp)
-        print("Voucher id={}, get detail={}, attempt={}".format(process.id, bool(answer), process.attempt))
-        if answer:
-            print(process.link)
-            with open(process.link, 'w', encoding='utf-8') as f:
-                json.dump(answer, f)
-            process.attempt = -1
-        else:
-            process.attempt += 1
-            Get_Voucher_Detail.apply_async([process_id], countdown=10)
-        db.session.commit()
+    if process:
+        if os.path.isfile(process.link):
+            return
+        if process.attempt < process.max_attempts:
+            answer = get_voucher(fn=process.fn, fd=process.fd, fp=process.fp)
+            print("Voucher id={}, get detail={}, attempt={}".format(process.id, bool(answer), process.attempt))
+            if answer:
+                print(process.link)
+                with open(process.link, 'w', encoding='utf-8') as f:
+                    json.dump(answer, f)
+                process.attempt = -1
+            else:
+                process.attempt += 1
+                Get_Voucher_Detail.apply_async([process_id], countdown=10)
+            db.session.commit()

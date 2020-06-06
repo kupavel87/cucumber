@@ -18,3 +18,9 @@ TEMP_DIR = os.environ.get('TEMP_DIR') or os.path.join(basedir, '..', 'temp')
 
 BROKER_URL = os.environ.get('CELERY_BROCKER_URL') or 'redis://localhost'
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND') or 'redis://localhost:6379'
+
+MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.googlemail.com'
+MAIL_PORT = os.environ.get('MAIL_PORT') or 587
+MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') or True
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'user@gmail.com'
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'password'

@@ -14,7 +14,23 @@ def admin_required(func):
         elif not current_user.is_authenticated:
             return current_app.login_manager.unauthorized()
         elif not current_user.is_admin:
-            flash('Эта страница доступна только админам')
-            return redirect(url_for('analysis.index'))
+            flash('Эта страница доступна только админам.')
+            return redirect(url_for('main.index'))
+        return func(*args, **kwargs)
+    return decorated_view
+
+
+def user_access_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if request.method in config.EXEMPT_METHODS:
+            return func(*args, **kwargs)
+        elif current_app.config.get('LOGIN_DISABLED'):
+            return func(*args, **kwargs)
+        elif not current_user.is_authenticated:
+            return current_app.login_manager.unauthorized()
+        elif current_user.limit_access:
+            flash('Доступ ограничен. Обратитесь к администратору за помощью.')
+            return redirect(url_for('main.index'))
         return func(*args, **kwargs)
     return decorated_view

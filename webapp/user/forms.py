@@ -31,13 +31,25 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()], render_kw={"class": "form-control"})
     password2 = PasswordField('Повторите пароль', validators=[
                               DataRequired(), EqualTo('password')], render_kw={"class": "form-control"})
-    submit = SubmitField('Отправить!', render_kw={"class": "btn btn-lg btn-primary btn-block"})
+    submit = SubmitField('Зарегистрироваться', render_kw={"class": "btn btn-lg btn-success btn-block"})
 
     def validate_username(self, username):
         return Validate_Username(username)
 
     def validate_email(self, email):
         return Validate_Email(email)
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()], render_kw={"class": "form-control"})
+    submit = SubmitField('Отправить!', render_kw={"class": "btn btn-lg btn-danger btn-block"})
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Пароль', validators=[DataRequired()], render_kw={"class": "form-control"})
+    password2 = PasswordField('Повторите пароль', validators=[
+                              DataRequired(), EqualTo('password')], render_kw={"class": "form-control"})
+    submit = SubmitField('Поменять пароль', render_kw={"class": "btn btn-lg btn-danger btn-block"})
 
 
 class EditUser(FlaskForm):

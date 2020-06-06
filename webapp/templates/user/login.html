@@ -2,22 +2,29 @@
 
 {% block content %}
 {% include('messages.html') %}
-<div class="row justify-content-center">
-    <form action="{{ url_for('user.process_login') }}" method="POST" class="form-singnin">
+<div class="d-flex justify-content-center">
+    <form action="{{ url_for('user.login') }}" method="POST" class="form-singnin">
         {{ form.hidden_tag() }}
-        <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>
+        <h1 class="h2 mb-3 font-weight-normal">Авторизация</h1>
         {{ form.username.label(class_='sr-only') }}
         {{ form.username(placeholder=form.username.label.text) }}
         {{ form.password.label(class_='sr-only') }}
         {{ form.password(placeholder=form.password.label.text) }}
-        <div class="checkbox">
+        <div class="checkbox text-center mt-1">
             {{ form.remember_me() }}
-            {{ form.remember_me.label }}
+            {{ form.remember_me.label() }}
         </div>
         <p>{{ form.submit() }}</p>
     </form>
 </div>
-<div class="row justify-content-center">
-    <a class="btn btn-link" href="{{ url_for('user.register') }}">Зарегистрироваться</a>
+<div class="d-flex justify-content-center">
+    <div class="form-group">
+        <div class="form-row justify-content-center">
+            <a class="btn btn-link" href="{{ url_for('user.reset_password_request') }}">Забыл пароль?</a>
+        </div>
+        <div class="form-row justify-content-center">
+            <a class="btn btn-link" href="{{ url_for('user.register') }}">Зарегистрироваться</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -1,5 +1,6 @@
 from flask import Flask, flash, render_template, redirect, url_for
 from flask_login import LoginManager, current_user, login_required
+from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_wtf.csrf import CSRFProtect
@@ -9,6 +10,7 @@ from webapp.admin.views import blueprint as admin_blueprint
 from webapp.catalog.models import Catalog
 from webapp.catalog.views import blueprint as catalog_blueprint
 from webapp.celery.tasks import celery
+from webapp.email import mail
 from webapp.main.views import blueprint as main_blueprint
 from webapp.purchase.models import Purchase
 from webapp.purchase.views import blueprint as purchase_blueprint
@@ -35,6 +37,7 @@ def create_app():
     app.config.from_pyfile('config.py')
     app.jinja_options['extensions'].append('jinja2.ext.do')
     db.init_app(app)
+    mail.init_app(app)
     migrate = Migrate(app, db)
     moment = Moment(app)
     CSRFProtect(app)

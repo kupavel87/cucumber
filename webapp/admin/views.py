@@ -13,11 +13,11 @@ from webapp.db import db
 blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 
 chapters = {
-    'users': {'name': 'Пользователи', 'link': 'admin.users', 'url_get': 'user.get'},
-    'catalog': {'name': 'Каталог', 'link': 'admin.catalog', 'url_get': 'catalog.get'},
-    'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list', 'url_get': 'admin.index'},
-    'products': {'name': 'Продукты', 'link': 'admin.products', 'url_get': 'admin.index'},
-    'purchase': {'name': 'Чеки', 'link': 'admin.purchases', 'url_get': 'admin.index'},
+    'users': {'name': 'Пользователи', 'link': 'admin.users'},
+    'catalog': {'name': 'Каталог', 'link': 'admin.catalog'},
+    'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list'},
+    'products': {'name': 'Продукты', 'link': 'admin.products'},
+    'purchase': {'name': 'Чеки', 'link': 'admin.purchases'},
 }
 
 

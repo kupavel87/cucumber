@@ -81,17 +81,19 @@ def save():
         else:
             category.parent_id = None
             category.level = 0
+        text = "Изменен каталог {}".format(name)
     else:
         if parent_id != '0':
             new_category = Catalog(name=name, parent_id=parent_id)
         else:
             new_category = Catalog(name=name, parent_id=None, level=0)
         db.session.add(new_category)
+        text = "Создан каталог {}".format(name)
     try:
         db.session.commit()
     except IntegrityError:
-        return jsonify(status='error')
-    return jsonify(status='ok')
+        return jsonify(status='error', text="Ошибка")
+    return jsonify(status='ok', text=text)
 
 
 @blueprint.route('/delete', methods=['POST'])
@@ -99,12 +101,13 @@ def save():
 def delete():
     id = request.form['id']
     category = Catalog.query.filter_by(id=id).first()
+    text = "Удален каталог {}".format(category.name)
     db.session.delete(category)
     try:
         db.session.commit()
     except IntegrityError:
-        return jsonify(status='error')
-    return jsonify(status='ok')
+        return jsonify(status='error', text="Ошибка")
+    return jsonify(status='ok', text=text)
 
 
 @blueprint.route('/products')

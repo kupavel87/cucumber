@@ -5,15 +5,13 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 
-{% block navbar %}QwertY{% endblock %}
-
 {% block content %}
-<div role="alert" aria-live="polite" aria-atomic="true">
+<div role="alert" aria-live="polite" aria-atomic="true" style="position: relative;">
     <div style="position: absolute; top: 50; right: 0;" class="my-toast"></div>
 </div>
 
 <div class="row">
-    <div class="col-sm-3 my-nav">
+    <div class="col-sm-3 chapter-nav">
         <div class="nav flex-column nav-pills border rounded shadow" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             {% for id, val in chapters.items() %}
             <a class="nav-link" data-toggle="pill" href="{{ url_for(val.link) }}" role="tab">{{ val.name }}</a>
@@ -22,7 +20,7 @@
         <select class="form-control mb-2">
             <option value="0" selected>Выбор раздела</option>
             {% for id, val in chapters.items() %}
-            <option value="{{ url_for(val.link) }}">{{ val.name }}</option>
+            <option value="{{ url_for(val.link) }}" }}">{{ val.name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -36,7 +34,6 @@
                 <div class="lvl-2-content"></div>
             </div>
         </div>
-        <button type="button" class="btn btn-success btn-lg btn-block mt-3 shadow add-btn" style="display: none;">Добавить</button>
     </div>
 </div>
 
@@ -55,7 +52,7 @@
         show_lvl_1();
     })
 
-    $('.my-nav .nav-link').click(function () {
+    $('.chapter-nav .nav-link').click(function () {
         // event.preventDefault();
         $.get($(this).attr('href'), function (data) {
             $(".lvl-1").html(data.html);
@@ -63,7 +60,7 @@
         });
     });
 
-    $('.my-nav select').change(function () {
+    $('.chapter-nav select').change(function () {
         var url = $(this).val();
         if (url != "0") {
             $.get(url, (data) => {

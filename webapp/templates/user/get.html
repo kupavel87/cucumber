@@ -44,9 +44,6 @@
     </div>
     {% endif %}
 </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-</div>
 <script>
     $('#save-btn').click(function () {
         $.ajax({
@@ -55,7 +52,7 @@
             data: $('#editForm').serialize(),
             success: function (data) {
                 $('#CreateModal').modal('hide');
-                $('#chapter-list .active').click();
+                reload_area();
                 show_message(data.text);
             },
             error: function (error) {
@@ -71,7 +68,7 @@
             data: $('#passForm').serialize(),
             success: function (data) {
                 $('#CreateModal').modal('hide');
-                $('#chapter-list .active').click();
+                reload_area();
                 show_message(data.text);
             },
             error: function (error) {

@@ -53,8 +53,16 @@
         {% endfor %}
     </tbody>
 </table>
+<button type="button" class="btn btn-success btn-lg btn-block my-3 shadow add-catalog">Добавить</button>
 
 <script>
+    $('.add-catalog').click(function () {
+        $.get("{{ url_for('catalog.get') }}", function (data) {
+            $("#CreateModal .modal-content").html(data.html);
+            $('#CreateModal').modal('show');
+        });
+    });
+
     $('.edit-catalog').click(function () {
         $.get($(this).attr('link'), function (data) {
             $(".modal-content").html(data.html);
@@ -76,7 +84,8 @@
             data: { 'id': id },
             success: function (data) {
                 $('#CreateModal').modal('hide');
-                $('#chapter-list .active').click();
+                reload_area();
+                show_message(data.text);
             },
             error: function (error) {
                 console.log(error);

@@ -3,7 +3,7 @@ from flask_login import current_user, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from webapp.db import db
-from webapp.email import send_password_reset_email, send_confirm_registration_email
+from webapp.celery.tasks import send_password_reset_email, send_confirm_registration_email
 from webapp.user.decorators import admin_required
 from webapp.user.forms import LoginForm, RegistrationForm, EditUser, ChangePassword, ResetPasswordRequestForm, ResetPasswordForm
 from webapp.user.models import User
@@ -53,7 +53,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash('Вы успешно зарегистрировались! Для получения полного доступа к сайту, вам на почту отправлено письмо с инструкцией. Проверьте вашу почту!')
-            send_confirm_registration_email(new_user)
+            send_confirm_registration_email.delay(new_user)
             return redirect(url_for('user.login'))
         else:
             for field, errors in form.errors.items():
@@ -88,8 +88,8 @@ def reset_password_request():
         print('reset password submit')
         user = User.query.filter_by(email=form.email.data).first()
         if user:
-            send_password_reset_email(user)
-        flash('Инструкция по сбросу пароля отправлена вам на почту')
+            send_password_reset_email.delay(user)
+        flash('Инструкция по сбросу пароля отправлена вам на почту.')
         return redirect(url_for('user.login'))
     return render_template('user/reset_password_request.html', form=form)
 

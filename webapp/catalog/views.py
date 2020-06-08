@@ -4,35 +4,13 @@ from werkzeug.exceptions import BadRequestKeyError
 
 from webapp.catalog.forms import CreateCatalog, CreateProduct, CreatePrice
 from webapp.catalog.models import Catalog, Product, Price, Pen_name
+from webapp.catalog.utils import CatalogModel_for_select, Products_to_Dict
 from webapp.db import db
 from webapp.purchase.models import Shop
 from webapp.user.decorators import admin_required
 from flask_login import login_required
 
 blueprint = Blueprint('catalog', __name__, url_prefix='/catalog')
-
-
-def CatalogModel_for_select(catalog):
-    result = []
-    for item in catalog:
-        prefix = '--' * item.get_level()
-        result.append((item.id, '{}{}'.format(prefix, item.name)))
-        children = item.children.all()
-        if len(children):
-            result.extend(CatalogModel_for_select(children))
-    return result
-
-
-def Products_to_Dict(products):
-    result = {}
-    for item in products:
-        prod = {'id': item.id, 'name': item.name.replace('\"', '\''), 'code': item.code}
-        id = item.catalog_id
-        if id in result:
-            result[id].append(prod)
-        else:
-            result[id] = [prod]
-    return result
 
 
 @blueprint.route('/')
@@ -78,6 +56,7 @@ def save():
         category.name = name
         if parent_id != '0':
             category.parent_id = parent_id
+            category.level = None
         else:
             category.parent_id = None
             category.level = 0

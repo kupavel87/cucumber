@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row h-100">
+    <div class="col-3">
+        <form method="POST" class="h-100" id="ChooseProduct">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.age.label() }}
+                {{ form.age() }}
+            </div>
+            <div class="form-group">
+                {{ form.catalog.label() }}
+                {{ form.catalog() }}
+            </div>
+            {{ form.product() }}
+            <div class="border rounded h-50 mb-3 overflow-auto list-group products-list"></div>
+            {{ form.submit() }}
+        </form>
+    </div>
+    <div class="col-9">
+        <canvas id="myChart" class="h-100 w-100"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+<script>
+    var prod = JSON.parse('{{ products | tojson }}');
+    var prod_template = '<a class="list-group-item list-group-item-action" data-toggle="list" href="#" id="product-id">'
+    $('#catalog').change(function () {
+        var val = $(this).val();
+        console.log('Catalog ' + val);
+        $('.products-list').html("");
+        if (val in prod) {
+            $('.products-list').append('<a class="list-group-item list-group-item-action active" data-toggle="list" href="#" id="0">Выбрать все</a>');
+            for (var key in prod[val]) {
+                item = prod[val][key];
+                var link = prod_template.replace('product-id', item.id) + item.name + '</a>';
+                $('.products-list').append(link);
+            }
+        }
+    });
+
+    $('#submit').click(function (event) {
+        event.preventDefault();
+        $('#product').val($('.products-list .active').attr('id'));
+        $.post("{{ url_for('analysis.load_data') }}", $('#ChooseProduct').serialize(), function (data) {
+            console.log(data.status);
+            if (data.status == "ok") {
+                myChart.data.labels = data.labels;
+                _data = JSON.parse(data.dataset);
+                myChart.data.datasets = _data;
+                myChart.update();
+            };
+        })
+    });
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0
+                    }
+                }],
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        parser: 'DD.MM.YYYY',
+                        unit: 'day',
+                    },
+                }]
+            }
+        }
+    });
+</script>
+{% endblock %}

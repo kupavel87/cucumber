@@ -2,6 +2,9 @@
 
 {% block content %}
 {% include('messages.html') %}
-<a role="button" class="btn btn-success btn-lg" href="{{ url_for('shopping.index') }}">Списки покупок</a>
-<a role="button" class="btn btn-success btn-lg" href="{{ url_for('purchase.index') }}">Чеки</a>
+<ul style="list-style-type:none;">
+<li class="mb-3"><a role="button" class="btn btn-success btn-lg" href="{{ url_for('shopping.index') }}">Списки покупок</a></li>
+<li class="mb-3"><a role="button" class="btn btn-success btn-lg" href="{{ url_for('purchase.index') }}">Чеки</a></li>
+<li class="mb-3"><a role="button" class="btn btn-success btn-lg" href="{{ url_for('analysis.index') }}">Аналитика</a></li>
+</ul>
 {% endblock %}

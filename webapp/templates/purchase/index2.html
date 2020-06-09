@@ -7,7 +7,7 @@
 {% block content %}
 {% include('messages.html') %}
 <div class="row">
-    <div class="col-sm-3 my-nav">
+    <div class="col-md-3 my-nav">
         <div class="nav flex-column nav-pills border rounded shadow" id="purchase-tab" role="tablist" aria-orientation="vertical">
             <a class="nav-link active" id="purchase-new-tab" data-toggle="pill" href="#purchase-new" role="tab" aria-controls="purchase-new" aria-selected="true">Новые чеки</a>
             <a class="nav-link" id="purchase-my-tab" data-toggle="pill" href="#purchase-my" role="tab" aria-controls="purchase-my" aria-selected="false">Мои чеки</a>
@@ -19,7 +19,7 @@
             <option value="#purchase-share-tab">Общие чеки</option>
         </select>
     </div>
-    <div class="col-sm-9">
+    <div class="col-md-9">
         <div class="tab-content overflow-auto border rounded shadow" id="purchase-tabContent">
             <div class="tab-pane fade show active" id="purchase-new" role="tabpanel" aria-labelledby="purchase-new-tab">
                 <table class="table table-striped table-sm">

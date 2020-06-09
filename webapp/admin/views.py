@@ -16,16 +16,16 @@ chapters = {
     'users': {'name': 'Пользователи', 'link': 'admin.users'},
     'catalog': {'name': 'Каталог', 'link': 'admin.catalog'},
     'products': {'name': 'Продукты', 'link': 'admin.products'},
-    'pen_names': {'name': 'Пседонимы продуктов*', 'link': 'admin.index'},
-    'prices': {'name': 'Цены*', 'link': 'admin.index'},
-    'shops': {'name': 'Магазины*', 'link': 'admin.index'},
-    'cash_desks': {'name': 'Кассы*', 'link': 'admin.index'},
+    'pen_names': {'name': 'Пседонимы продуктов*', 'link': 'admin.coming_soon'},
+    'prices': {'name': 'Цены*', 'link': 'admin.coming_soon'},
+    'shops': {'name': 'Магазины*', 'link': 'admin.coming_soon'},
+    'cash_desks': {'name': 'Кассы*', 'link': 'admin.coming_soon'},
     'purchases': {'name': 'Чеки', 'link': 'admin.purchases'},
-    'purchase_items': {'name': 'Детали чеков*', 'link': 'admin.index'},
-    'process_purchases': {'name': 'Обработка чеков*', 'link': 'admin.index'},
+    'purchase_items': {'name': 'Детали чеков*', 'link': 'admin.coming_soon'},
+    'process_purchases': {'name': 'Обработка чеков*', 'link': 'admin.coming_soon'},
     'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list'},
-    'shopping_items': {'name': 'Детали списков покупок*', 'link': 'admin.index'},
-    'list_access': {'name': 'Права достпа к спискам покупок*', 'link': 'admin.index'},
+    'shopping_items': {'name': 'Детали списков покупок*', 'link': 'admin.coming_soon'},
+    'list_access': {'name': 'Права достпа к спискам покупок*', 'link': 'admin.coming_soon'},
 }
 
 
@@ -35,6 +35,12 @@ def index():
     title = 'Админка'
     return render_template('admin/index2.html', page_title=title, chapters=chapters)
 
+
+@blueprint.route('/coming_soon')
+@admin_required
+def coming_soon():
+    html = render_template('admin/coming_soon.html')
+    return  jsonify(html=html)
 
 @blueprint.route('/users', methods=['GET', 'POST'])
 @admin_required

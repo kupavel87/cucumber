@@ -6,15 +6,15 @@
 
 {% block content %}
 <div class="row justify-content-around mt-2">
-    <form method="POST" class="col-8" id="mainForm" autocomplete="off">
+    <form method="POST" class="col-lg-8" id="mainForm" autocomplete="off">
         {{ form.hidden_tag() }}
         {{ form.process_id() }}
         <div class="form-group row">
-            <div class="col-lg-6 mb-1 d-flex justify-content-start">
+            <div class="col-md-6 mb-1 d-flex justify-content-start">
                 {{ form.date.label(class_='col-auto col-form-label') }}
                 <div class='col-auto'>{{ form.date(value=date.strftime('%d.%m.%Y %H:%M'), readonly='') }}</div>
             </div>
-            <div class="col-lg-6 d-flex justify-content-end">
+            <div class="col-md-6 d-flex justify-content-end">
                 <span class="input-group-prepend checkShop"></span>
                 {{ form.shop_id() }}
                 {{ form.shop_id.label(class_='col-auto col-form-label shop-name') }}
@@ -29,7 +29,7 @@
         {% for item in form.rows %}
         <div class="form-group title-row">
             <div class="form-row">
-                <div class="input-group col-lg-8 mb-1">
+                <div class="input-group col-md-8 mb-1">
                     {{ item.id() }}
                     <div class="input-group-prepend">
                         <span class="input-group-text checkTitle"></span>
@@ -43,14 +43,14 @@
                         </button>
                     </div>
                 </div>
-                <div class="input-group col-lg-4 mb-1">
+                <div class="input-group col-md-4 mb-1">
                     <div class="col-6">{{ item.quantity() }}</div>
                     <div class="col-6">{{ item.total() }}</div>
                 </div>
             </div>
 
             <div class="form-row mt-1">
-                <div class="col-lg-8">
+                <div class="col-md-8">
                     <div class="collapse" id="priceDetail{{ loop.index }}">
                         <ul class="list-group">
                             <li class="list-group-item d-flex">
@@ -73,7 +73,7 @@
             </div>
         </div>
         {% endfor %}
-        <div class="form-group row d-flex justify-content-end">
+        <div class="form-group row d-flex justify-content-end purchase-total">
             {{ form.total.label(class_='col-auto col-form-label') }}
             <div class='col-auto'>{{ form.total() }}</div>
         </div>
@@ -81,7 +81,7 @@
     </form>
 </div>
 
-{% include "purchase/add_confirm_model.html" %}
+{% include "purchase/add_confirm_modal.html" %}
 {% endblock %}
 
 {% block script %}

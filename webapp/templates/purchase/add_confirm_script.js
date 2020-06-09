@@ -123,7 +123,7 @@ function update_products(val=0) {
         $("#ChooseProduct #catalog_id").find('option').remove();
         $("#ChooseProduct #catalogSelect option").clone().appendTo("#ChooseProduct #catalog_id");
         if (val>0) {
-            $("#ChooseProduct #catalogSelect").val(val);
+            $("#ChooseProduct #catalogSelect").val(val).change();
         };
         $("#ChooseProduct").modal("show");
     });
@@ -269,7 +269,7 @@ $('#submit').click(function (event) {
         'date': $('#mainForm #date').val(),
         'process_id': $('#mainForm #process_id').val(),
         'shop_id': $('#mainForm #shop_id').val(),
-        'total': $('#mainForm #total').val(),
+        'total': $('#mainForm .purchase-total #total').val(),
         'items': []
     }
     $('[id ^= priceDetail]').each(function () {

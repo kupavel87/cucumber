@@ -14,16 +14,16 @@
                     <div class="row mb-1">
                         <div class="col">
                             <div class="form-row">
-                                <label for="fp" class="col col-form-label">fp</label>
-                                <div class="col-auto">
+                                <label for="fp" class="col-lg-4 col-form-label">fp</label>
+                                <div class="col flex-grow-1">
                                     <input type="text" class="form-control" value="{{ purchase.fp }}" id="fp" readonly>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-row">
-                                <label for="date" class="col col-form-label">Дата</label>
-                                <div class="col-auto">
+                                <label for="date" class="col-lg-4 col-form-label">Дата</label>
+                                <div class="col flex-grow-1">
                                     <input type="text" class="form-control" value="{{ purchase.date }}" id="date" readonly>
                                 </div>
                             </div>
@@ -32,27 +32,26 @@
                     <div class="row mb-1">
                         <div class="col">
                             <div class="form-row">
-                                <label for="shop" class="col col-form-label">Магазин</label>
-                                <div class="col-auto">
+                                <label for="shop" class="col-lg-2 col-form-label">Магазин</label>
+                                <div class="col flex-grow-1">
                                     <input type="text" class="form-control" value="{{ purchase.shop.name }}" id="shop" readonly>
                                 </div>
                             </div>
                         </div>
-                        <div class="col"></div>
                     </div>
                     <div class="row">
                         <div class="col">
                             <div class="form-row">
-                                <label for="count" class="col col-form-label">Позиций</label>
-                                <div class="col-auto">
+                                <label for="count" class="col-lg-4 col-form-label">Позиций</label>
+                                <div class="col flex-grow-1">
                                     <input type="text" class="form-control" value="{{ purchase.items.count() }}" id="count" readonly>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-row">
-                                <label for="total" class="col col-form-label">Сумма</label>
-                                <div class="col-auto">
+                                <label for="total" class="col-lg-4 col-form-label">Сумма</label>
+                                <div class="col flex-grow-1">
                                     <input type="text" class="form-control" value="{{ purchase.total }}" id="total" readonly>
                                 </div>
                             </div>

@@ -1,12 +1,12 @@
 <div class="form-row">
     <label for="catalogSelect" class="form-control-label col-4">Каталог</label>
-    <select class="form-control col-8" id="catalogSelect">
+    <select class="form-control col-8" id="catalogSelect" onfocus='this.size=15;', onblur='this.size=1;', onchange='this.size=1; this.blur();'>
         {% for opt in choises %}
         <option value={{ opt.0 }}>{{ opt.1 }}</option>
         {% endfor %}
     </select>
 </div>
-<div class="list-group products-list" role="tablist"></div>
+<div class="list-group border rounded mb-3 overflow-auto products-list" role="tablist" style="min-height: 200px;"></div>
 
 <script>
     var prod = JSON.parse('{{ all_products | tojson }}');

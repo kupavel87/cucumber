@@ -14,7 +14,7 @@
         </div>
         <div class="form-group row">
             {{ form.parent_id.label(class_='col-3 col-form-label') }}
-            <div class='col-9'>{{ form.parent_id() }}</div>
+            <div class='col-9'>{{ form.parent_id(onfocus='this.size=10;', onblur='this.size=1;', onchange='this.size=1; this.blur();') }}</div>
         </div>
     </div>
     <div class="modal-footer">

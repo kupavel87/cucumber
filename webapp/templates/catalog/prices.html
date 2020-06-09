@@ -10,7 +10,7 @@
         <option selected value={{ product.id }}>{{ product.name }}</option>
     </select>
 </div>
-<div class="list-group prices-list" role="tablist">
+<div class="list-group border rounded mb-3 overflow-auto prices-list" role="tablist" style="min-height: 150px;">
     {% for item in prices %}
     <a class="list-group-item list-group-item-action d-flex justify-content-between" data-toggle="list" href="#" role="tab" id="{{ item.id }}">
         {{ item.price }} ({{ item.date.strftime('%d.%m.%Y') }})

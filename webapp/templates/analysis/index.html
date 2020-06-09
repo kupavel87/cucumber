@@ -63,12 +63,14 @@
         options: {
             scales: {
                 yAxes: [{
+                    stacked: true,
                     ticks: {
                         min: 0
                     }
                 }],
                 xAxes: [{
                     type: 'time',
+                    stacked: true,
                     time: {
                         parser: 'DD.MM.YYYY',
                         unit: 'day',

@@ -59,12 +59,11 @@ def process_add():
         process = Process_Purchase.query.filter_by(fp=form.fp.data).first()
         if not process:
             process = Process_Purchase(author_id=current_user.id, fn=form.fn.data, fd=form.fd.data,
-                                       fp=form.fp.data, fdate=form.fdate.data, fsum=form.fsum.data, attempt=0)
+                                       fp=form.fp.data, fdate=form.fdate.data.strftime('%Y-%m-%dT%H:%M'), fsum=form.fsum.data, attempt=0)
             db.session.add(process)
         else:
-            process.update(form.fn.data, form.fd.data, form.fdate.data, form.fsum.data)
+            process.update(form.fn.data, form.fd.data, form.fdate.data.strftime('%Y-%m-%dT%H:%M'), form.fsum.data)
         db.session.commit()
-        print("Start check voucher id={}".format(process.id))
         Check_Voucher.delay(process_id=process.id)
         return redirect(url_for('purchase.waiting', fp=process.fp))
     if form2.validate_on_submit():
@@ -87,8 +86,9 @@ def process_add():
 def process_edit(fp):
     process = Process_Purchase.query.filter_by(fp=fp).first() if fp else False
     if process and process.is_edit(current_user):
-        
-        form = AddVoucherForm(fn=process.fn, fd=process.fd, fp=process.fp, fdate=datetime.strptime(process.fdate, '%Y-%m-%d %H:%M'), fsum=process.fsum)
+
+        form = AddVoucherForm(fn=process.fn, fd=process.fd, fp=process.fp,
+                              fdate=datetime.strptime(process.fdate, '%Y-%m-%d %H:%M'), fsum=process.fsum)
         html = render_template('purchase/pre_add.html', form=form)
     else:
         form = AddVoucherForm()
@@ -131,7 +131,6 @@ def repeat(fp):
             os.remove(process.link)
         process.attempt = 0
         db.session.commit()
-        print("Start check voucher id={}".format(process.id))
         Check_Voucher.delay(process_id=process.id)
         return redirect(url_for('purchase.waiting', fp=process.fp))
     abort(404)

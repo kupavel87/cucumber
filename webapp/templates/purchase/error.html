@@ -3,7 +3,7 @@
 {% block content %}
 <h3 class="text-danger">Ошибка. Не получилось получить чек.</h3>
 <p>Проверьте правильность введенных данных и повторите попытку позже.</p>
-<form div="d-flex justify-content-center">
+<form div="d-flex justify-content-center" autocomplete="off">
     <div class="form-group">
         <label for="fn" class="col-3">fn</label>
         <div class="col-9" id="fn">{{ process.fn }}</div>

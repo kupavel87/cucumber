@@ -41,13 +41,13 @@
                 </p>
             </div>
             <div class="card-footer d-flex justify-content-around">
-                <form action="{{ url_for('shopping.detail') }}" method="POST">
+                <form action="{{ url_for('shopping.detail') }}" method="POST" autocomplete="off">
                     {{ open_form.hidden_tag() }}
                     {{ open_form.id(value=item.id) }}
                     {{ open_form.submit() }}
                 </form>
                 <button type="button" class="btn btn-warning property_list" id="{{ item.id }}">Изменить</button>
-                <form action="{{ url_for('shopping.delete_list') }}" method="POST">
+                <form action="{{ url_for('shopping.delete_list') }}" method="POST" autocomplete="off">
                     {{ del_form.hidden_tag() }}
                     {{ del_form.id(value=item.id) }}
                     {{ del_form.submit() }}

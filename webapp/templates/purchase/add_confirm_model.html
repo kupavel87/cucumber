@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="col-6 shop-list"></div>
                     <div class="col-6">
-                        <form id="addShop">
+                        <form id="addShop" autocomplete="off">
                             {{ shop_form.hidden_tag() }}
                             <div class="form-group">
                                 {{ shop_form.name.label() }}
@@ -57,7 +57,7 @@
                 <div class="row">
                     <div class="col-6 product-list"></div>
                     <div class="col-6">
-                        <form id="addProduct">
+                        <form id="addProduct" autocomplete="off">
                             {{ product_form.hidden_tag() }}
                             <div class="form-group">
                                 {{ product_form.name.label() }}
@@ -107,7 +107,7 @@
                 <div class="row">
                     <div class="col-6 price-list"></div>
                     <div class="col-6">
-                        <form id="addPrice">
+                        <form id="addPrice" autocomplete="off">
                             {{ price_form.hidden_tag() }}
                             <div class="form-row">
                                 {{ price_form.shop_id.label(class_="col-4 col-form-label") }}

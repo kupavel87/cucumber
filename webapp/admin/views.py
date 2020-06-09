@@ -15,9 +15,17 @@ blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 chapters = {
     'users': {'name': 'Пользователи', 'link': 'admin.users'},
     'catalog': {'name': 'Каталог', 'link': 'admin.catalog'},
-    'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list'},
     'products': {'name': 'Продукты', 'link': 'admin.products'},
-    'purchase': {'name': 'Чеки', 'link': 'admin.purchases'},
+    'pen_names': {'name': 'Пседонимы продуктов*', 'link': 'admin.index'},
+    'prices': {'name': 'Цены*', 'link': 'admin.index'},
+    'shops': {'name': 'Магазины*', 'link': 'admin.index'},
+    'cash_desks': {'name': 'Кассы*', 'link': 'admin.index'},
+    'purchases': {'name': 'Чеки', 'link': 'admin.purchases'},
+    'purchase_items': {'name': 'Детали чеков*', 'link': 'admin.index'},
+    'process_purchases': {'name': 'Обработка чеков*', 'link': 'admin.index'},
+    'shopping_list': {'name': 'Списки покупок', 'link': 'admin.shopping_list'},
+    'shopping_items': {'name': 'Детали списков покупок*', 'link': 'admin.index'},
+    'list_access': {'name': 'Права достпа к спискам покупок*', 'link': 'admin.index'},
 }
 
 

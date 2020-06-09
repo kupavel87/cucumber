@@ -34,7 +34,6 @@ def parser_answer(file):
             shop = cash_desk.shop
     if not shop:
         if shop_address:
-            print(shop_address)
             shop = Shop(inn=shop_inn, address=shop_address)
         else:
             shop = Shop(inn=shop_inn)

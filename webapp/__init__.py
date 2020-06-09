@@ -8,11 +8,14 @@ from flask_wtf.csrf import CSRFProtect
 from webapp.db import db
 from webapp.admin.views import blueprint as admin_blueprint
 from webapp.analysis.views import blueprint as analysis_blueprint
+from webapp.catalog.models import Catalog, Product, Pen_name, Price
 from webapp.catalog.views import blueprint as catalog_blueprint
 from webapp.celery.tasks import celery
 from webapp.email import mail
 from webapp.main.views import blueprint as main_blueprint
+from webapp.purchase.models import Shop, Cash_desk, Purchase, Purchase_Item, Process_Purchase
 from webapp.purchase.views import blueprint as purchase_blueprint
+from webapp.shopping.models import Shopping_list, Shopping_item, List_access
 from webapp.shopping.views import blueprint as shopping_blueprint
 from webapp.user.models import User
 from webapp.user.views import blueprint as user_blueprint

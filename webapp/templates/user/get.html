@@ -6,7 +6,7 @@
 </div>
 <div class="modal-body">
     <div class="jumbotron bg-transparent">
-        <form id="editForm" method="POST">
+        <form id="editForm" method="POST" autocomplete="off">
             {{ form1.hidden_tag() }}
             {{ form1.id() }}
 
@@ -27,7 +27,7 @@
     </div>
     {% if form2.id.data %}
     <div class="jumbotron">
-        <form id="passForm" method="POST">
+        <form id="passForm" method="POST" autocomplete="off">
             {{ form2.hidden_tag() }}
             {{ form2.id() }}
 

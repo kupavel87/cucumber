@@ -1,5 +1,5 @@
 <div class="row justify-content-around">
-    <form action="{{ url_for('purchase.process_add') }}" method="POST">
+    <form action="{{ url_for('purchase.process_add') }}" method="POST" autocomplete="off">
         {{ form.hidden_tag() }}
         <div class="form-group row ml-2">
             {{ form.fn.label(class_='col-2 col-form-label') }}
@@ -29,7 +29,7 @@
     </form>
 
     {% if form2 %}
-    <form action="{{ url_for('purchase.process_add') }}" method="POST">
+    <form action="{{ url_for('purchase.process_add') }}" method="POST" autocomplete="off">
         {{ form2.hidden_tag() }}
         <div class="form-group ml-2">
             {{ form2.qr_str.label(class_='form-label') }}

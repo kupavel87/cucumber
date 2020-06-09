@@ -1,8 +1,8 @@
-"""first
+"""Repeat fist create
 
-Revision ID: 4ae2c36dbb6a
+Revision ID: 79d32003d075
 Revises: 
-Create Date: 2020-06-01 14:34:34.606575
+Create Date: 2020-06-09 04:01:03.830292
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4ae2c36dbb6a'
+revision = '79d32003d075'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -42,11 +42,33 @@ def upgrade():
     sa.Column('password', sa.String(length=128), nullable=True),
     sa.Column('role', sa.String(length=10), nullable=True),
     sa.Column('email', sa.String(length=50), nullable=True),
+    sa.Column('limit_access', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
-    op.create_index(op.f('ix_user_role'), 'user', ['role'], unique=False)
     op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
+    op.create_table('cash_desk',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('shop_id', sa.Integer(), nullable=False),
+    sa.Column('fn', sa.String(length=16), nullable=True),
+    sa.ForeignKeyConstraint(['shop_id'], ['shop.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_cash_desk_fn'), 'cash_desk', ['fn'], unique=True)
+    op.create_table('process__purchase',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('author_id', sa.Integer(), nullable=True),
+    sa.Column('fn', sa.String(length=16), nullable=False),
+    sa.Column('fp', sa.String(length=10), nullable=False),
+    sa.Column('fd', sa.String(length=10), nullable=False),
+    sa.Column('fdate', sa.String(length=16), nullable=False),
+    sa.Column('fsum', sa.String(length=10), nullable=False),
+    sa.Column('max_attempts', sa.Integer(), nullable=False),
+    sa.Column('attempt', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['author_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_process__purchase_fp'), 'process__purchase', ['fp'], unique=True)
     op.create_table('product',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('code', sa.String(length=13), nullable=True),
@@ -59,12 +81,16 @@ def upgrade():
     op.create_index(op.f('ix_product_name'), 'product', ['name'], unique=True)
     op.create_table('purchase',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('fp', sa.String(length=10), nullable=True),
     sa.Column('date', sa.DateTime(), nullable=True),
     sa.Column('shop_id', sa.Integer(), nullable=False),
     sa.Column('total', sa.Float(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['author_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['shop_id'], ['shop.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_purchase_fp'), 'purchase', ['fp'], unique=True)
     op.create_table('shopping_list',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
@@ -138,12 +164,16 @@ def downgrade():
     op.drop_table('pen_name')
     op.drop_table('list_access')
     op.drop_table('shopping_list')
+    op.drop_index(op.f('ix_purchase_fp'), table_name='purchase')
     op.drop_table('purchase')
     op.drop_index(op.f('ix_product_name'), table_name='product')
     op.drop_index(op.f('ix_product_code'), table_name='product')
     op.drop_table('product')
+    op.drop_index(op.f('ix_process__purchase_fp'), table_name='process__purchase')
+    op.drop_table('process__purchase')
+    op.drop_index(op.f('ix_cash_desk_fn'), table_name='cash_desk')
+    op.drop_table('cash_desk')
     op.drop_index(op.f('ix_user_username'), table_name='user')
-    op.drop_index(op.f('ix_user_role'), table_name='user')
     op.drop_table('user')
     op.drop_index(op.f('ix_shop_inn'), table_name='shop')
     op.drop_table('shop')

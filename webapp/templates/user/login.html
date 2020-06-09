@@ -3,7 +3,7 @@
 {% block content %}
 {% include('messages.html') %}
 <div class="d-flex justify-content-center">
-    <form action="{{ url_for('user.login') }}" method="POST" class="form-singnin">
+    <form action="{{ url_for('user.login') }}" method="POST" class="form-singnin" autocomplete="off">
         {{ form.hidden_tag() }}
         <div class="h2 mb-3">Авторизация</div>
         {{ form.username.label(class_='sr-only') }}

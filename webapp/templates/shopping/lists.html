@@ -41,7 +41,7 @@
                 </p>
             </div>
             <div class="card-footer d-flex justify-content-around">
-                <form action="{{ url_for('shopping.detail') }}" method="POST">
+                <form action="{{ url_for('shopping.detail') }}" method="POST" autocomplete="off">
                     <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
                     <input id="id" name="id" value="{{ item.id }}" type="hidden">
                     <button type="submit" class="btn btn-success">Открыть</button>

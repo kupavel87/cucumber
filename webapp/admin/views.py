@@ -40,7 +40,8 @@ def index():
 @admin_required
 def coming_soon():
     html = render_template('admin/coming_soon.html')
-    return  jsonify(html=html)
+    return jsonify(html=html)
+
 
 @blueprint.route('/users', methods=['GET', 'POST'])
 @admin_required

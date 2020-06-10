@@ -18,8 +18,6 @@ blueprint = Blueprint('purchase', __name__, url_prefix='/purchase')
 @blueprint.route('/')
 @login_required
 def index():
-    # processes = Process_Purchase.query.filter_by(author_id=current_user.id).all()
-    # return render_template('purchase/index.html', processes=current_user.processes, purchases=current_user.purchases)
     return render_template('purchase/index2.html', user=current_user)
 
 

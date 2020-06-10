@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 
 from webapp.db import db
-# from webapp.purchase.models import Shop
 
 
 class Catalog(db.Model):
@@ -11,8 +10,8 @@ class Catalog(db.Model):
     name = db.Column(db.String(255), unique=True, nullable=False)
     level = db.Column(db.Integer)
     parent_id = db.Column(db.Integer, db.ForeignKey('catalog.id'))
-    children = relationship('Catalog', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
-    products = relationship('Product', backref='catalog', lazy='dynamic')
+    children = relationship('Catalog', backref=db.backref('parent', remote_side=[id]), lazy='joined')
+    products = relationship('Product', backref='catalog', lazy='joined')
 
     def get_level(self):
         if self.level is None:

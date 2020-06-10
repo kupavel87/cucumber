@@ -34,7 +34,7 @@ class Purchase(db.Model):
     shop_id = db.Column(db.Integer, db.ForeignKey('shop.id'), nullable=False)
     shop = relationship('Shop')
     total = db.Column(db.Float)
-    items = relationship('Purchase_Item', backref='purchase', lazy='dynamic')
+    items = relationship('Purchase_Item', backref='purchase', lazy='joined')
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     author = relationship("User", backref='purchases')
 

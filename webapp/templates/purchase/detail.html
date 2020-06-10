@@ -44,7 +44,7 @@
                             <div class="form-row">
                                 <label for="count" class="col-lg-4 col-form-label">Позиций</label>
                                 <div class="col flex-grow-1">
-                                    <input type="text" class="form-control" value="{{ purchase.items.count() }}" id="count" readonly>
+                                    <input type="text" class="form-control" value="{{ purchase.items|length }}" id="count" readonly>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in purchase.items.all() %}
+                        {% for item in purchase.items %}
                         <tr class="text-center">
                             <th scope="row">{{ item.id }}</th>
                             <td class="text-left">{{ item.price.product.name }}</td>

@@ -10,8 +10,8 @@ def CatalogModel_for_select(catalog_list, dict_full_catalog=None):
                 continue
         prefix = '--' * catalog.get_level()
         result.append((catalog.id, '{}{}{}'.format(prefix, catalog.name, postfix)))
-        if catalog.children.count():
-            result.extend(CatalogModel_for_select(catalog.children.all(), dict_full_catalog))
+        if len(catalog.children):
+            result.extend(CatalogModel_for_select(catalog.children, dict_full_catalog))
     return result
 
 
@@ -30,11 +30,11 @@ def Products_to_Dict(products):
 def CatalogChildrenCount(catalog_list, catalog_products_count):
     for catalog in catalog_list:
         result = 0
-        if catalog.children.count():
-            for child in catalog.children.all():
+        if len(catalog.children):
+            for child in catalog.children:
                 if child.id not in catalog_products_count:
                     CatalogChildrenCount([child], catalog_products_count)
                 result += catalog_products_count[child.id]
         else:
-            result = catalog.products.count()
+            result = len(catalog.products)
         catalog_products_count[catalog.id] = result

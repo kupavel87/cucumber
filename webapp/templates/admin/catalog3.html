@@ -17,8 +17,8 @@
                 <div class="pl-5">
                 {% endif %}
                     {{ item.name }}
-                    {% if item.products.count() %}
-                    ({{ item.products.count() }})
+                    {% if item.products|length > 0 %}
+                    ({{ item.products|length }})
                     {% endif %}
                 </div>
             </td>

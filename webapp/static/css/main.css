@@ -9,3 +9,8 @@
 .lvl-2:hover .lvl-2 {
     display: block;
 }
+
+.sticky-bottom {
+    position: sticky;
+    bottom: 0;
+}

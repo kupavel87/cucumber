@@ -27,12 +27,12 @@ class AddVoucherForm(FlaskForm):
     fdate = DateTimeField('Дата', format='%Y-%m-%dT%H:%M',
                           validators=[DataRequired()], render_kw={"class": "form-control"})
     fsum = StringField('Сумма', validators=[DataRequired()], render_kw={"class": "form-control"})
-    submit = SubmitField('Добавить', render_kw={"class": "btn btn-lg btn-success btn-block"})
+    submit = SubmitField('Добавить', render_kw={"class": "btn btn-lg btn-success shadow btn-block"})
 
 
 class AddVoucherQRForm(FlaskForm):
     qr_str = TextAreaField('QR код', validators=[DataRequired()], render_kw={"class": "form-control"})
-    submit = SubmitField('Добавить', render_kw={"class": "btn btn-lg btn-success btn-block"})
+    submit = SubmitField('Добавить', render_kw={"class": "btn btn-lg btn-success shadow btn-block align-bottom"})
 
 
 class VoucherRow(FlaskForm):

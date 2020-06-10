@@ -9,7 +9,7 @@ from webapp.db import db
 
 class Shop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    inn = db.Column(db.String(20), index=True, unique=True)
+    inn = db.Column(db.String(20))
     name = db.Column(db.String(255), unique=True, nullable=False)
     address = db.Column(db.String(255))
     cash_desks = relationship('Cash_desk', backref='shop', lazy='dynamic')

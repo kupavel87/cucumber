@@ -1,41 +1,44 @@
-<div class="row justify-content-around">
-    <form action="{{ url_for('purchase.process_add') }}" method="POST" autocomplete="off">
-        {{ form.hidden_tag() }}
-        <div class="form-group row ml-2">
-            {{ form.fn.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fn() }}</div>
-        </div>
-        <div class="form-group row ml-2">
-            {{ form.fd.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fd() }}</div>
-        </div>
-        <div class="form-group row ml-2">
-            {{ form.fp.label(class_='col-2 col-form-label') }}
-            {% if form.fp.data %}
-            <div class='col-10'>{{ form.fp(readonly='') }}</div>
-            {% else %}
-            <div class='col-10'>{{ form.fp() }}</div>
-            {% endif %}
-        </div>
-        <div class="form-group row ml-2">
-            {{ form.fdate.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fdate() }}</div>
-        </div>
-        <div class="form-group row ml-2">
-            {{ form.fsum.label(class_='col-2 col-form-label') }}
-            <div class='col-10'>{{ form.fsum() }}</div>
-        </div>
-        <p>{{ form.submit() }}</p>
-    </form>
-
-    {% if form2 %}
-    <form action="{{ url_for('purchase.process_add') }}" method="POST" autocomplete="off">
-        {{ form2.hidden_tag() }}
-        <div class="form-group ml-2">
-            {{ form2.qr_str.label(class_='form-label') }}
-            {{ form2.qr_str() }}
-        </div>
-        <p>{{ form2.submit() }}</p>
-    </form>
+<div class="row">
+    <div class="col-lg-6">
+        <form action="{{ url_for('purchase.process_add') }}" method="POST" autocomplete="off">
+            {{ form.hidden_tag() }}
+            <div class="form-group row ml-2">
+                {{ form.fn.label(class_='col-2 col-form-label') }}
+                <div class='col-10'>{{ form.fn() }}</div>
+            </div>
+            <div class="form-group row ml-2">
+                {{ form.fd.label(class_='col-2 col-form-label') }}
+                <div class='col-10'>{{ form.fd() }}</div>
+            </div>
+            <div class="form-group row ml-2">
+                {{ form.fp.label(class_='col-2 col-form-label') }}
+                {% if form.fp.data %}
+                <div class='col-10'>{{ form.fp(readonly='') }}</div>
+                {% else %}
+                <div class='col-10'>{{ form.fp() }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group row ml-2">
+                {{ form.fdate.label(class_='col-2 col-form-label') }}
+                <div class='col-10'>{{ form.fdate() }}</div>
+            </div>
+            <div class="form-group row ml-2">
+                {{ form.fsum.label(class_='col-2 col-form-label') }}
+                <div class='col-10'>{{ form.fsum() }}</div>
+            </div>
+            {{ form.submit() }}
+        </form>
+    </div>
+    <div class="col-lg-6 rounded" style="background-color: #e9ecef;">
+        {% if form2 %}
+        <form action="{{ url_for('purchase.process_add') }}" method="POST" autocomplete="off">
+            {{ form2.hidden_tag() }}
+            <div class="form-group ml-3 mr-3">
+                {{ form2.qr_str.label(class_='form-label') }}
+                {{ form2.qr_str(rows='5') }}
+            </div>
+            {{ form2.submit() }}
+        </form>
+    </div>
     {% endif %}
 </div>

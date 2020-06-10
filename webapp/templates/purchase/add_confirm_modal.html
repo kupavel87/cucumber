@@ -61,7 +61,7 @@
                             {{ product_form.hidden_tag() }}
                             <div class="form-group">
                                 {{ product_form.name.label() }}
-                                {{ product_form.name(onclick="this.select();") }}
+                                {{ product_form.name() }}
                             </div>
                             <div class="form-group">
                                 {{ product_form.code.label() }}
@@ -73,7 +73,7 @@
                             </div>
                             <div class="form-group">
                                 {{ product_form.pen_name.label() }}
-                                {{ product_form.pen_name(onclick="this.select();") }}
+                                {{ product_form.pen_name() }}
                             </div>
                         </form>
                     </div>

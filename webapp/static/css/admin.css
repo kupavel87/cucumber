@@ -3,11 +3,6 @@
     overflow:auto;
 }
 
-.sticky-bottom {
-    position: sticky;
-    bottom: 0;
-}
-
 .jumbotron {
     margin-bottom: 0rem;
     padding-top: 1rem;
@@ -16,7 +11,7 @@
 
 .toast {
     position: relative;
-    z-index: 1;
+    z-index: 100;
 }
 
 .chapter-nav select {

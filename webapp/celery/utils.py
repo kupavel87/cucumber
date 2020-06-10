@@ -24,19 +24,24 @@ def parser_answer(file):
     shop_address = answer['document']['receipt'].get('retailPlaceAddress')
     items = answer['document']['receipt'].get('items')
 
-    if shop_inn:
-        shop = Shop.query.filter_by(inn=shop_inn).first()
+    shop = ''
+    if fn:
+        cash_desk = Cash_desk.query.filter_by(fn=fn)
+        if cash_desk.count() == 1:
+            shop = cash_desk.first().shop
+    if not shop and shop_inn:
+        shop_by_inn = Shop.query.filter_by(inn=shop_inn)
+        if shop_by_inn.count() == 1:
+            shop = shop_by_inn.first()
     if not shop and shop_address:
-        shop = Shop.query.filter_by(address=shop_address).first()
-    if not shop and fn:
-        cash_desk = Cash_desk.query.filter_by(fn=fn).first()
-        if cash_desk:
-            shop = cash_desk.shop
-    if not shop:
-        if shop_address:
-            shop = Shop(inn=shop_inn, address=shop_address)
+        shop_by_address = Shop.query.filter_by(address=shop_address)
+        if shop_by_address.count() == 1:
+            shop = shop_by_address.first()
         else:
-            shop = Shop(inn=shop_inn)
+            shop = Shop(inn=shop_inn, address=shop_address)
+    if not shop:
+        shop = Shop(inn=shop_inn)
+
     products = []
     for item in items:
         name = item['name']

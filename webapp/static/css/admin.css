@@ -11,6 +11,10 @@
 
 .toast {
     position: relative;
+    z-index: 1000;
+}
+
+.chapter-nav, .chapter-content {
     z-index: 100;
 }
 

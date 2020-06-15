@@ -1,0 +1,48 @@
+<form id="editForm" method="POST" autocomplete="off" action="{{ url_for('purchase.purchase_edit', id=form.id.data) }}">
+    {{ form.hidden_tag() }}
+    {{ form.id() }}
+    <div class="modal-header">
+        <h5 class="modal-title" id="CreateModalLabel">Редактирование</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row mb-2">
+            {{ form.fp.label(class_='col-lg-4 col-form-label ml-2 ml-lg-0') }}
+            <div class='col-lg-8'>{{ form.fp() }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.date.label(class_='col-lg-4 col-form-label ml-2 ml-lg-0') }}
+            <div class='col-lg-8'>{{ form.date() }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.shop_id.label(class_='col-lg-4 col-form-label ml-3 ml-lg-0') }}
+            <div class='col-lg-8'>{{ form.shop_id(onfocus='this.size=10;', onblur='this.size=1;', onchange='this.size=1; this.blur();') }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.author_id.label(class_='col-lg-4 col-form-label ml-3 ml-lg-0') }}
+            <div class='col-lg-8'>{{ form.author_id(onfocus='this.size=10;', onblur='this.size=1;', onchange='this.size=1; this.blur();') }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.total.label(class_='col-lg-4 col-form-label ml-2 ml-lg-0') }}
+            <div class='col-lg-8'>{{ form.total() }}</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        {{ form.submit() }}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+    </div>    
+</form>
+
+<script>
+    $('#editForm').submit(function (event) {
+        event.preventDefault();
+        $.post($(this).attr('action'), $(this).serialize(), function (data) {
+            console.log(data.status);
+            $('#CreateModal').modal('hide');
+            show_message(data.text);
+            reload_area();
+        });
+    });
+</script>

@@ -1,0 +1,45 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="CreateModalLabel">Изменение</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="jumbotron bg-transparent">
+        <form id="editForm" method="POST" autocomplete="off" action="{{ url_for('user.edit', id=form1.id.data) }}" onsubmit="Edit_Done($(this))">
+            {{ form1.hidden_tag() }}
+            {{ form1.id() }}
+            <div class="form-group row">
+                {{ form1.username.label(class_='col-4 col-form-label') }}
+                <div class='col-8'>{{ form1.username() }}</div>
+            </div>
+            <div class="form-group row">
+                {{ form1.email.label(class_='col-4 col-form-label') }}
+                <div class='col-8'>{{ form1.email() }}</div>
+            </div>
+            <div class="form-group row">
+                {{ form1.role.label(class_='col-4 col-form-label') }}
+                <div class='col-8'>{{ form1.role() }}</div>
+            </div>
+            {{ form1.submit() }}
+        </form>
+    </div>
+    {% if form2.id.data %}
+    <div class="jumbotron">
+        <form id="passForm" method="POST" action="{{ url_for('user.edit', id=form2.id.data) }}" onsubmit="Edit_Done($(this))">
+            {{ form2.hidden_tag() }}
+            {{ form2.id() }}
+
+            <div class=" form-group row">
+                {{ form2.password.label(class_='col-4 col-form-label') }}
+                <div class='col-8'>{{ form2.password(autocomplete="on") }}</div>
+            </div>
+            <div class="form-group row">
+                {{ form2.password2.label(class_='col-4 col-form-label') }}
+                <div class='col-8'>{{ form2.password2(autocomplete="on") }}</div>
+            </div>
+            {{ form2.submit() }}
+        </form>
+    </div>
+    {% endif %}
+</div>

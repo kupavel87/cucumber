@@ -2,21 +2,21 @@
     <thead class="thead-dark">
         <tr>
             <th scope="col">id</th>
-            <th scope="col">Имя</th>
-            <th scope="col">Категория</th>
+            <th scope="col">Продукт</th>
+            <th scope="col">Псевдоним</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        {% for product in products %}
+        {% for item in pen_names %}
         <tr>
-            <th scope="row">{{ product.id }}</th>
-            <td>{{ product.name }}</td>
-            <td>{{ product.catalog.name }}</td>
+            <th scope="row">{{ item.id }}</th>
+            <td>{{ item.product_id }}</td>
+            <td>{{ item.name }}</td>
             <td class="d-flex justify-content-around">
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="First group">
-                        <button type="button" class="btn btn-outline-dark" link="{{ url_for('catalog.product_edit', id=product.id) }}" onclick="Edit_Item($(this))">
+                        <button type="button" class="btn btn-outline-dark" link="{{ url_for('catalog.pen_name_edit', id=item.id) }}" onclick="Edit_Item($(this))">
                             <svg class="bi bi-pencil-square" width="1em" height="1em" viewBox="0 0 16 16"
                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -25,7 +25,7 @@
                                     d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                             </svg>
                         </button>
-                        <button type="button" class="btn btn-outline-dark" link="{{ url_for('catalog.product_delete', id=product.id) }}" onclick="Del_Item($(this))">
+                        <button type="button" class="btn btn-outline-dark" link="{{ url_for('catalog.pen_name_delete', id=item.id) }}" onclick="Del_Item($(this))">
                             <svg class="bi bi-trash-fill" width="1em" height="1em" viewBox="0 0 16 16"
                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
@@ -40,3 +40,20 @@
         {% endfor %}
     </tbody>
 </table>
+
+<script>
+    $('.edit-pen_name').click(function () {
+        $.get($(this).attr('link'), function (data) {
+            $(".modal-content").html(data.html);
+            $('#CreateModal').modal('show');
+        });
+    });
+
+    $('.del-pen_name').click(function () {
+        $.get($(this).attr('link'), function (data) {
+            console.log(data.status);
+            show_message(data.text);
+            reload_area();
+        });
+    });
+</script>

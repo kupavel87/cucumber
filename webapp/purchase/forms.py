@@ -6,10 +6,11 @@ from webapp.catalog.models import Product, Price
 
 
 class CreateShop(FlaskForm):
-    id = StringField('id', render_kw={"class": "form-control", "hidden": ""})
+    id = IntegerField('id', render_kw={"class": "form-control", "hidden": ""})
     inn = StringField('ИНН', render_kw={"class": "form-control"})
     name = StringField('Название', validators=[DataRequired()], render_kw={"class": "form-control"})
     address = StringField('Адрес', render_kw={"class": "form-control"})
+    submit = SubmitField('Сохранить', render_kw={"class": "btn btn-success"})
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -18,6 +19,34 @@ class CreateShop(FlaskForm):
             self.inn.data = shop.inn
             self.name.data = shop.name
             self.address.data = shop.address
+
+
+class CreateCashDeskForm(FlaskForm):
+    id = IntegerField('id', render_kw={"class": "form-control", "hidden": ""})
+    shop_id = SelectField('Магазин', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    fn = StringField('ФН', validators=[DataRequired()], render_kw={"class": "form-control"})
+    submit = SubmitField('Сохранить', render_kw={"class": "btn btn-success"})
+
+
+class CreatePurchaseForm(FlaskForm):
+    id = IntegerField('id', render_kw={"class": "form-control", "hidden": ""})
+    fp = StringField('ФП', validators=[DataRequired()], render_kw={"class": "form-control"})
+    date = DateTimeField('Дата', format='%d.%m.%Y %H:%M', validators=[
+                         DataRequired()], render_kw={"class": "form-control"})
+    shop_id = SelectField('Магазин', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    author_id = SelectField('Автор', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    total = FloatField('Сумма', validators=[DataRequired()], render_kw={"class": "form-control"})
+    submit = SubmitField('Сохранить', render_kw={"class": "btn btn-success"})
+
+
+class CreatePurchaseItemForm(FlaskForm):
+    id = IntegerField('id', render_kw={"class": "form-control", "hidden": ""})
+    author_id = SelectField('Автор', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    purchase_id = SelectField('Чек', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    price_id = SelectField('Цена', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    quantity = FloatField('Количество', validators=[DataRequired()], render_kw={"class": "form-control"})
+    total = FloatField('Сумма', validators=[DataRequired()], render_kw={"class": "form-control"})
+    submit = SubmitField('Сохранить', render_kw={"class": "btn btn-success"})
 
 
 class AddVoucherForm(FlaskForm):

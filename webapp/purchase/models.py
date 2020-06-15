@@ -32,10 +32,11 @@ class Purchase(db.Model):
     fp = db.Column(db.String(10), unique=True, index=True)
     date = db.Column(db.DateTime)
     shop_id = db.Column(db.Integer, db.ForeignKey('shop.id'), nullable=False)
-    shop = relationship('Shop')
     total = db.Column(db.Float)
-    items = relationship('Purchase_Item', backref='purchase', lazy='joined')
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    shop = relationship('Shop')
+    items = relationship('Purchase_Item', backref='purchase', lazy='joined')
     author = relationship("User", backref='purchases')
 
     def is_edit(self, user):
@@ -51,9 +52,10 @@ class Purchase_Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     purchase_id = db.Column(db.Integer, db.ForeignKey('purchase.id'), nullable=False)
     price_id = db.Column(db.Integer, db.ForeignKey('price.id'), nullable=False)
-    price = relationship('Price')
     quantity = db.Column(db.Float, nullable=False)
     total = db.Column(db.Float)
+
+    price = relationship('Price')
 
     def __repr__(self):
         return '<{}: {} * {} = {}>'.format(self.price.product.name, self.price.price, self.quantity, self.total)
@@ -62,14 +64,15 @@ class Purchase_Item(db.Model):
 class Process_Purchase(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = relationship('User', backref='processes')
     fn = db.Column(db.String(16), nullable=False)
     fp = db.Column(db.String(10), unique=True, index=True, nullable=False)
     fd = db.Column(db.String(10), nullable=False)
     fdate = db.Column(db.String(16), nullable=False)
     fsum = db.Column(db.String(10), nullable=False)
-    max_attempts = db.Column(db.Integer, default=10, nullable=False)
     attempt = db.Column(db.Integer, default=0, nullable=False)
+    max_attempts = db.Column(db.Integer, default=10, nullable=False)
+
+    author = relationship('User', backref='processes', lazy='joined')
 
     @property
     def link(self):

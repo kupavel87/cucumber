@@ -1,0 +1,62 @@
+<form id="editForm" method="POST" autocomplete="off" action="{{ url_for('catalog.price_edit', id=form.id.data) }}">
+    {{ form.hidden_tag() }}
+    {{ form.id() }}
+    <div class="modal-header">
+        <h5 class="modal-title" id="CreateModalLabel">Редактирование</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row mb-2">
+            {{ form.catalog_id.label(class_='col-lg-3 col-form-label ml-3 ml-lg-0') }}
+            <div class='col-lg-9'>{{ form.catalog_id(onfocus='this.size=10;', onblur='this.size=1;', onchange='this.size=1; this.blur();') }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.product_id.label(class_='col-lg-3 col-form-label ml-3 ml-lg-0') }}
+            <div class='col-lg-9'>{{ form.product_id(onfocus='this.size=10;', onblur='this.size=1;', onchange='this.size=1; this.blur();') }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.shop_id.label(class_='col-lg-3 col-form-label ml-3 ml-lg-0') }}
+            <div class='col-lg-9'>{{ form.shop_id(onfocus='this.size=10;', onblur='this.size=1;', onchange='this.size=1; this.blur();') }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.date.label(class_='col-lg-3 col-form-label ml-3 ml-lg-0') }}
+            <div class='col-lg-9'>{{ form.date() }}</div>
+        </div>
+        <div class="form-row mb-2">
+            {{ form.price.label(class_='col-lg-3 col-form-label ml-3 ml-lg-0') }}
+            <div class='col-lg-9'>{{ form.price() }}</div>
+        </div>
+        <div class="checkbox text-center mb-2">
+            {{ form.discount() }}
+            {{ form.discount.label(class_='form-check-label') }}
+        </div>
+    </div>
+    <div class="modal-footer">
+        {{ form.submit() }}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+    </div>    
+</form>
+
+<script>
+    var prod = JSON.parse('{{ products | tojson }}');
+
+    $('#catalog_id').change(function () {
+        var val = $(this).val();
+        $('#product_id').html("");
+        $('#product_id').append('<option value="0" selected>Продукт не выбран</option>');
+        for (var key in prod[val]) {
+            $('#product_id').append('<option value="' + prod[val][key][0] + '">' + prod[val][key][1] + '</option>');
+        }
+    });
+    $('#editForm').submit(function (event) {
+        event.preventDefault();
+        $.post($(this).attr('action'), $(this).serialize(), function (data) {
+            console.log(data.status);
+            $('#CreateModal').modal('hide');
+            show_message(data.text);
+            reload_area();
+        });
+    });
+</script>

@@ -41,13 +41,11 @@ def logout():
 
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
-    print("registartion")
     if current_user.is_authenticated:
         return redirect(url_for('purchase.index'))
     form = RegistrationForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            print("registartion submit")
             new_user = User(username=form.username.data, email=form.email.data, role='user')
             new_user.set_password(form.password.data)
             db.session.add(new_user)
@@ -79,13 +77,10 @@ def confirm_register(token):
 
 @blueprint.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
-    print("reset password")
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = ResetPasswordRequestForm()
-    print(request.form)
     if form.validate_on_submit():
-        print('reset password submit')
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email.delay(user)
@@ -96,7 +91,6 @@ def reset_password_request():
 
 @blueprint.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password2(token):
-    print("reset password - stage 2")
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     user = User.verify_token(token)
@@ -112,72 +106,62 @@ def reset_password2(token):
     return render_template('user/reset_password.html', form=form)
 
 
-@blueprint.route('/get/', defaults={'id': 0})
-@blueprint.route('/get/<int:id>')
+@blueprint.route('/edit/', defaults={'id': 0}, methods=['GET', 'POST'])
+@blueprint.route('/edit/<int:id>', methods=['GET', 'POST'])
 @admin_required
-def get(id):
+def edit(id):
     form1 = EditUser()
-    form2 = ChangePassword()
+    form2 = ChangePassword(prefix="pass")
     if id > 0:
         user = User.query.filter_by(id=id).first()
-        form1.load(user)
-        form2.id.data = user.id
-    html = render_template('user/get.html', form1=form1, form2=form2)
+        if request.method == 'GET':
+            form1.id.data = user.id
+            form1.username.data = user.username
+            form1.email.data = user.email
+            form1.role.data = user.role
+            form2.id.data = user.id
+        if request.method == 'POST':
+            if form1.validate_on_submit():
+                user.username = form1.username.data
+                user.email = form1.email.data
+                user.role = form1.role.data
+                text = "Пользователь {} изменен".format(user.username)
+            elif form2.validate_on_submit():
+                user.set_password(form2.password.data)
+                text = "Пароль пользователя {} изменен".format(user.username)
+            else:
+                return jsonify(status='error', text='{}'.format(form1.errors))
+            try:
+                db.session.commit()
+            except IntegrityError:
+                text = "Ошибка сохранения пользователя {}".format(user.username)
+                return jsonify(status='error', text=text)
+            return jsonify(status='ok', text=text)
+    else:
+        if form1.validate_on_submit():
+            new_user = User(username=form1.username.data, email=form1.email.data, role=form1.role.data)
+            new_pass = random_password()
+            new_user.set_password(new_pass)
+            db.session.add(new_user)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                text = "Ошибка сохранения пользователя {}".format(form1.username.data)
+                return jsonify(status='error', text=text)
+            text = "Пользователь {} добавлен. Пароль {}".format(form1.username.data, new_pass)
+            return jsonify(status='ok', text=text)
+    html = render_template('user/edit.html', form1=form1, form2=form2)
     return jsonify(html=html)
 
 
-@blueprint.route('/save', methods=['POST'])
+@blueprint.route('/delete/<int:id>')
 @admin_required
-def save():
-    form = EditUser()
-    if form.id.data:
-        user = User.query.filter_by(id=form.id.data).first()
-        user.username = form.username.data
-        user.email = form.email.data
-        user.role = form.role.data
-    else:
-        new_user = User(username=form.username.data, email=form.email.data, role=form.role.data)
-        new_pass = random_password()
-        new_user.set_password(new_pass)
-        db.session.add(new_user)
-    try:
-        db.session.commit()
-    except IntegrityError:
-        text = "Ошибка сохранения пользователя {}".format(form.username.data)
-        return jsonify(status='error', text=text)
-    if form.id.data:
-        text = "Пользователь {} изменен".format(form.username.data)
-    else:
-        text = "Пользователь {} добавлен. Пароль {}".format(form.username.data, new_pass)
-    return jsonify(status='ok', text=text)
-
-
-@blueprint.route('/change_pass', methods=['POST'])
-@admin_required
-def change_pass():
-    form = ChangePassword()
-    print(request.form)
-    if form.validate:
-        user = User.query.filter_by(id=form.id.data).first()
-        user.set_password(form.password.data)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            text = "Ошибка сохранения пользователя {}".format(user.username)
-            return jsonify(status='error', text=text)
-        text = "Пароль пользователя {} изменен".format(user.username)
-        return jsonify(status='ok', text=text)
-    return jsonify(status='error', text="Ошибка данных")
-
-
-@blueprint.route('/delete', methods=['POST'])
-@admin_required
-def delete():
-    id = request.form['id']
+def delete(id):
     user = User.query.filter_by(id=id).first()
     db.session.delete(user)
+    text = 'Пользователь {} удален'.format(user.username)
     try:
         db.session.commit()
     except IntegrityError:
         return jsonify(status='error', text='Ошибка удаления пользователя {}'.format(user.username))
-    return jsonify(status='ok', text='Пользователь {} удален'.format(user.username))
+    return jsonify(status='ok', text=text)

@@ -31,6 +31,7 @@ class Product(db.Model):
     name = db.Column(db.String(255), index=True, unique=True, nullable=False)
     catalog_id = db.Column(db.Integer, db.ForeignKey('catalog.id'), nullable=False)
     pen_names = relationship('Pen_name', backref='product', lazy='dynamic')
+    prices = relationship('Price', backref='product', lazy='dynamic')
 
     def __repr__(self):
         return '<Product {}>'.format(self.name)
@@ -53,7 +54,6 @@ class Price(db.Model):
     discount = db.Column(db.Boolean, default=False, nullable=False)
     price = db.Column(db.Float, default=0.0, nullable=False)
 
-    product = relationship('Product')
     shop = relationship('Shop')
 
     def __repr__(self):

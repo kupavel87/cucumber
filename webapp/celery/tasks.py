@@ -37,7 +37,6 @@ def Get_Voucher_Detail(process_id):
             answer = get_voucher(fn=process.fn, fd=process.fd, fp=process.fp)
             print("Voucher id={}, get detail={}, attempt={}".format(process.id, bool(answer), process.attempt))
             if answer:
-                print(process.link)
                 with open(process.link, 'w', encoding='utf-8') as f:
                     json.dump(answer, f)
                 process.attempt = -1

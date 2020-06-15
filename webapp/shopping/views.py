@@ -5,6 +5,7 @@ from werkzeug.exceptions import BadRequestKeyError
 from webapp.catalog.models import Catalog
 from webapp.shopping.forms import CreateShoppingListForm, OpenDetail, DeleteList, RoleForm, ClearList
 from webapp.shopping.models import Shopping_list, Shopping_item, List_access
+from webapp.user.decorators import admin_required
 from webapp.user.models import User
 from webapp.db import db
 
@@ -173,3 +174,16 @@ def clear_shopping_list():
     else:
         return 'Error. Access is denied'
     return redirect(url_for('shopping.detail'), code=307)
+
+
+@blueprint.route('/shopping_item_edit/', defaults={'id': 0})
+@blueprint.route('/shopping_item_edit/<int:id>')
+@admin_required
+def shopping_item_edit(id):
+    pass
+
+
+@blueprint.route('/shopping_item_delete/<int:id>')
+@admin_required
+def shopping_item_delete(id):
+    pass

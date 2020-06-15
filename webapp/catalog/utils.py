@@ -15,10 +15,13 @@ def CatalogModel_for_select(catalog_list, dict_full_catalog=None):
     return result
 
 
-def Products_to_Dict(products):
+def Products_to_Dict(products, for_select=False):
     result = {}
     for item in products:
-        prod = {'id': item.id, 'name': item.name.replace('\"', '\''), 'code': item.code}
+        if for_select:
+            prod = (item.id, item.name)
+        else:
+            prod = {'id': item.id, 'name': item.name.replace('\"', '\''), 'code': item.code}
         id = item.catalog_id
         if id in result:
             result[id].append(prod)
@@ -38,3 +41,15 @@ def CatalogChildrenCount(catalog_list, catalog_products_count):
         else:
             result = len(catalog.products)
         catalog_products_count[catalog.id] = result
+
+
+def Prices_to_Dict(prices):
+    result = {}
+    for item in prices:
+        select = (item.id, '{}({})'.format(item.price, item.date.strftime('%d.%m.%Y')))
+        id = item.product_id
+        if id in result:
+            result[id].append(select)
+        else:
+            result[id] = [select]
+    return result

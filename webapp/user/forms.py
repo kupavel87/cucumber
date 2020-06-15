@@ -57,18 +57,7 @@ class EditUser(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()], render_kw={"class": "form-control"})
     email = StringField('Email', validators=[DataRequired(), Email()], render_kw={"class": "form-control"})
     role = SelectField('Роль', validators=[DataRequired()], choices=roles, render_kw={"class": "form-control"})
-
-    def validate_username(self, username):
-        return Validate_Username(username)
-
-    def validate_email(self, email):
-        return Validate_Email(email)
-
-    def load(self, user):
-        self.id.data = user.id
-        self.username.data = user.username
-        self.email.data = user.email
-        self.role.data = user.role
+    submit = SubmitField('Сохранить', render_kw={"class": "btn btn-success"})
 
 
 class ChangePassword(FlaskForm):
@@ -76,3 +65,4 @@ class ChangePassword(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()], render_kw={"class": "form-control"})
     password2 = PasswordField('Повторите пароль', validators=[
                               DataRequired(), EqualTo('password')], render_kw={"class": "form-control"})
+    submit = SubmitField('Сохранить', render_kw={"class": "btn btn-success"})

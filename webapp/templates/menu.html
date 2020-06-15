@@ -8,8 +8,8 @@
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
+    <div class="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-sm-auto">
             <!-- <li class="nav-item active">
           <a class="nav-link" href="/">Главная страница <span class="sr-only">(current)</span></a>
         </li> -->
@@ -30,6 +30,7 @@
                 {% endif %}
                 <a class="dropdown-item" href="{{ url_for('shopping.index') }}">Списки покупок</a>
                 <a class="dropdown-item" href="{{ url_for('purchase.index') }}">Мои чеки</a>
+                <a class="dropdown-item" href="{{ url_for('analysis.index') }}">Аналитика</a>
                 <hr>
                 <a class="dropdown-item" href="{{ url_for('user.logout') }}">Выйти</a>
             </div>

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, SubmitField, DateTimeField, HiddenField, SelectField, FieldList, FormField
+from wtforms import BooleanField, StringField, SubmitField, DateTimeField, HiddenField, SelectField, FieldList, FormField, FloatField
 from wtforms.validators import DataRequired, ValidationError
 
 roles = [('1', 'Нет прав'), ('2', 'Чтение'), ('3', 'Редактирование'), ('4', 'Управление')]
@@ -39,6 +39,14 @@ class CreateShoppingListForm(FlaskForm):
                 else:
                     role.role = 1
                 self.access.append_entry(role)
+
+
+class CreateShoppingItemForm(FlaskForm):
+    id = StringField('id', validators=[DataRequired()], render_kw={"class": "form-control", "hidden": ""})
+    list_id = SelectField('Список', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    catalog_id = SelectField('Категория', validators=[DataRequired()], coerce=int, render_kw={"class": "form-control"})
+    quantity = FloatField('Количество', validators=[DataRequired()], render_kw={"class": "form-control"})
+    submit = SubmitField('Сохранить', render_kw={"class": "btn btn-success"})
 
 
 class OpenDetail(FlaskForm):

@@ -33,3 +33,39 @@ function reload_area() {
         $('.chapter-nav .active').click();
     };
 };
+
+function Edit_Item(button) {
+    console.log('edit_item');
+    $(".modal-content").html('');
+    $.get(button.attr('link'), function (data) {
+        $(".modal-content").html(data.html);
+        $('#CreateModal').modal('show');
+    });
+};
+
+function Del_Item(button) {
+    console.log('del_item');
+    $.get(button.attr('link'), function (data) {
+        console.log(data.status);
+        show_message(data.text);
+        reload_area();
+    });
+};
+
+function Edit_Done(form) {
+    event.preventDefault();
+    console.log('edit_done');
+    $.post(form.attr('action'), form.serialize(), function (data) {
+        console.log(data.status);
+        $('#CreateModal').modal('hide');
+        show_message(data.text);
+        reload_area();
+    });
+};
+
+function Enter_Item(button) {
+    $.get(button.attr('link'), function (data) {
+        $('.lvl-2-content').html(data.html);
+        show_lvl_1(false);
+    });
+};

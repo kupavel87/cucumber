@@ -11,8 +11,8 @@ class Shopping_list(db.Model):
     favorit = db.Column(db.Boolean, default=False, nullable=False)
     private = db.Column(db.Boolean, default=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = relationship("User")
-    items = relationship('Shopping_item', lazy='dynamic')
+    author = relationship("User", lazy="joined")
+    items = relationship('Shopping_item', backref='shopping_list', lazy='dynamic')
     access = relationship('List_access')
     date_create = db.Column(db.DateTime, default=datetime.utcnow)
     date_change = db.Column(db.DateTime, default=datetime.utcnow)
@@ -40,10 +40,11 @@ class Shopping_list(db.Model):
 
 class Shopping_item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    catalog_id = db.Column(db.Integer, db.ForeignKey('catalog.id'))
-    catalog = relationship("Catalog")
-    quantity = db.Column(db.Integer)
     list_id = db.Column(db.Integer, db.ForeignKey('shopping_list.id'))
+    catalog_id = db.Column(db.Integer, db.ForeignKey('catalog.id'))
+    quantity = db.Column(db.Integer)
+
+    catalog = relationship("Catalog", lazy='joined')
 
     @property
     def name(self):
